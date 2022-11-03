@@ -3,10 +3,10 @@
 #include <stdlib.h>
 #include <stdio.h>
 
-typedef struct{
+typedef struct CHAIN_LIST_ELEMENT_STRUCT {
     void* element;
-    void* previus;
-    void* next;
+    struct CHAIN_LIST_ELEMENT_STRUCT* previus;
+    struct CHAIN_LIST_ELEMENT_STRUCT* next;
 } ChainListElement;
 
 typedef struct{
