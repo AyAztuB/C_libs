@@ -14,7 +14,7 @@ You can also obtain a static library using `make static`
 
 If you want, you also can add the `libchain_list.a` in `/usr/lib/`
 and the `chain_list.h` in `/usr/include/` but i personally prefer
-the synamic one.
+the dynamic one.
 
 ## Use
 
