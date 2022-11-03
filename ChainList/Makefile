@@ -4,14 +4,15 @@ HDR = chain_list.h
 SRC = chain_list.c
 OBJ = $(SRC:.c=.o)
 CC = gcc
-CFLAGS = -Wall -Wextra -Werror
+CFLAGS = -Wall -Wextra -Werror -fPIC
 
-dynamic:
-	$(CC) $(CFLAGS) -fPIC -c -o $(OBJ) $(SRC)
+all: install
+
+
+dynamic: $(OBJ)
 	$(CC) -shared -o $(DYNAMIC) $(OBJ)
 
-static:
-	$(CC) $(CFLAGS) -c -o $(OBJ) $(SRC)
+static: $(OBJ)
 	ar -rcs $(STATIC) $(OBJ)
 
 install:
@@ -19,6 +20,10 @@ install:
 	cp $(DYNAMIC) /usr/lib/
 	cp $(HDR) /usr/include/
 
+%.o: %.c %.h
+	$(CC) $(CFLAGS) -c -o $@ $<
+
 clean:
 	$(RM) $(OBJ) $(DYNAMIC) $(STATIC)
+
 
