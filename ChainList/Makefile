@@ -19,7 +19,7 @@ install:
 	make dynamic
 	cp $(DYNAMIC) /usr/lib/
 	cp $(HDR) /usr/include/
-	cp chain_list /usr/share/man/man3/chain_list.3
+	cp chain_list.t /usr/share/man/man3/chain_list.3
 	gzip /usr/share/man/man3/chain_list.3
 
 %.o: %.c %.h
