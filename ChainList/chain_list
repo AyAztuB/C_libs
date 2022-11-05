@@ -7,7 +7,7 @@ chain_list \- chained list library functions
 .B #include <chain_list.h>
 
 .SH DESCRIPTION
-The chained list library provides a simple implementation of chained list.
+The chained list library provides a simple implementation of chained list in C.
 The struct and functions are listed below.
 
 .PP
@@ -78,6 +78,6 @@ remove ChainListElement at index \fIindex\fR in \fIlist\fR and return its conten
 .RE
 
 .SH AUTHOR
-created by \fBAyAztuB\fR (ayaztub@gmail.com) from \fIhttps://github.com/AyAztuB/C_libs/tree/main/ChainList\fR
+created by \fBAyAztuB\fR (\fIayaztub@gmail.com\fR) from \fIhttps://github.com/AyAztuB/C_libs/tree/main/ChainList\fR
 
 
