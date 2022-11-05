@@ -6,6 +6,8 @@
 
 content : a complete implementation of chained lists with generals types
 
+call `man chain_list` for informations about availables functions
+
 ## DESCRIPTION
 
 ### Structs
