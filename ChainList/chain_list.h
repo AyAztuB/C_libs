@@ -34,7 +34,6 @@
 #define __CHAIN_LIST_H__
 
 #include <stdlib.h>
-#include <stdio.h>
 
 typedef struct CHAIN_LIST_ELEMENT_STRUCT {
     void* element;
