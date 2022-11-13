@@ -1,8 +1,10 @@
 #include "sb3.h"
 #include <stdio.h>
 
+
 int main(void)
 {
+    /* GENERATE IMAGE
     Image_t* image = malloc(sizeof(*image));
     image->format = SB3_RGB_FORMAT;
     image->h = 480;
@@ -24,6 +26,9 @@ int main(void)
         }
     }
     return write_image("test.bmp", image);
+    */
+    Image_t* image = read_image("test.bmp", SB3_RGB_FORMAT);
+    return write_image("copy.bmp", image);
 }
 
 

@@ -21,11 +21,17 @@ install: dynamic
 	cp $(DYNAMIC) /usr/lib/
 	cp $(HDR) /usr/include/
 
+install_debug:
+	$(CC) -DSB3_CRASH_WHEN_ERROR $(CFLAGS) -c -o sb3.o sb3.c
+	$(CC) -shared -o $(DYNAMIC) sb3.o
+	cp $(DYNAMIC) /usr/lib/
+	cp $(HDR) /usr/include/
+
 %.o: %.c
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 clean:
-	$(RM) $(OBJ) $(DYNAMIC) $(STATIC) a.out *.bmp
+	$(RM) $(OBJ) $(DYNAMIC) $(STATIC) a.out copy.bmp
 
 
 
