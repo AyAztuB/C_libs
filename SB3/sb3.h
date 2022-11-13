@@ -41,6 +41,7 @@ typedef struct {
 
 // FUNCTIONS
 
+char* SB3_GetError(void);
 SB3_errors_t write_image(const char* path, Image_t* image);
 Image_t* read_image(const char* path, Image_format_t format);
 

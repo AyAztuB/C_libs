@@ -1,6 +1,6 @@
 #include "sb3.h"
 #include <stdio.h>
-
+#include <err.h>
 
 int main(void)
 {
@@ -28,7 +28,12 @@ int main(void)
     return write_image("test.bmp", image);
     */
     Image_t* image = read_image("crash.bmp", SB3_RGB_FORMAT);
-    return write_image("test.bmp", image);
+    if(!image)
+        errx(EXIT_FAILURE, "%s", SB3_GetError());
+    if(write_image("test.bmp", image))
+        errx(EXIT_FAILURE, "%s", SB3_GetError());
+    return EXIT_SUCCESS;
 }
+
 
 

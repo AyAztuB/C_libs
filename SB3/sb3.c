@@ -5,12 +5,34 @@
 
 SB3_errors_t last_error = SB3_SUCCESS_EXIT;
 
+char* SB3_GetError(void)
+{
+    switch (last_error)
+    {
+        case SB3_NULL_PATH_ERROR:
+            return "image path was NULL";
+        case SB3_UNSUPORTED_BMP_FORMAT_ERROR:
+            return "the bmp image passed in parameter has an unsuported format";
+        case SB3_NULL_IMAGE_ERROR:
+            return "image passed in parameter was NULL";
+        case SB3_BAD_EXTENSION_ERROR:
+            return "the path given in parameter hasn't '.bmp' extension";
+        case SB3_BAD_FORMAT_ERROR:
+            return "try to read an rgb image like a mono color image";
+        case SB3_CORRUPTED_FILE_ERROR:
+            return "try to read bmp image who doesn't have 'BM' signature at first 2 bytes";
+        case SB3_CANNOT_OPEN_FILE_ERROR:
+            return "cannot open given file";
+        default:
+            return "THERE IS NO FUCKING ERROR: WHY DO YOU WANT A MESSAGE ERROR WHEN THERE IS NO ERROR ?";
+    }
+}
 
 SB3_errors_t write_image(const char* path, Image_t* image) {
     if(!image)
     {
         #ifdef SB3_CRASH_WHEN_ERROR
-            errx(EXIT_FAILURE, "WRITE_IMAGE: NULL image cannot be saved\n");
+            errx(EXIT_FAILURE, "WRITE_IMAGE: NULL image cannot be saved");
         #else
             last_error = SB3_NULL_IMAGE_ERROR;
             return SB3_NULL_IMAGE_ERROR;
@@ -19,7 +41,7 @@ SB3_errors_t write_image(const char* path, Image_t* image) {
     if(!path)
     {
         #ifdef SB3_CRASH_WHEN_ERROR
-            errx(EXIT_FAILURE, "WRITE_IMAGE: NULL path error\n");
+            errx(EXIT_FAILURE, "WRITE_IMAGE: NULL path error");
         #else
             last_error = SB3_NULL_PATH_ERROR;
             return SB3_NULL_PATH_ERROR;
@@ -30,7 +52,7 @@ SB3_errors_t write_image(const char* path, Image_t* image) {
             (path[len-2] != 'M' && path[len-2] != 'm') || (path[len-1] != 'P' && path[len-1] != 'p'))
     {
         #ifdef SB3_CRASH_WHEN_ERROR
-            errx(EXIT_FAILURE, "WRITE_IMAGE: Bad file extension (%s) (expected '.BMP' extension (with lower or upper cases))\n", path);
+            errx(EXIT_FAILURE, "WRITE_IMAGE: Bad file extension (%s) (expected '.BMP' extension (with lower or upper cases))", path);
         #else
             last_error = SB3_BAD_EXTENSION_ERROR;
             return SB3_BAD_EXTENSION_ERROR;
@@ -41,7 +63,7 @@ SB3_errors_t write_image(const char* path, Image_t* image) {
     if(!file)
     {
         #ifdef SB3_CRASH_WHEN_ERROR
-            errx(EXIT_FAILURE, "WRITE_IMAGE: Cannot open file at '%s'\n", path);
+            errx(EXIT_FAILURE, "WRITE_IMAGE: Cannot open file at '%s'", path);
         #else
             last_error = SB3_CANNOT_OPEN_FILE_ERROR;
             return SB3_CANNOT_OPEN_FILE_ERROR;
@@ -169,7 +191,7 @@ Image_t* read_image(const char* path, Image_format_t format)
     if(!path)
     {
         #ifdef SB3_CRASH_WHEN_ERROR
-            errx(EXIT_FAILURE, "READ_IMAGE: NULL path error\n");
+            errx(EXIT_FAILURE, "READ_IMAGE: NULL path error");
         #else
             last_error = SB3_NULL_PATH_ERROR;
             return NULL;
@@ -180,7 +202,7 @@ Image_t* read_image(const char* path, Image_format_t format)
             (path[len-2] != 'M' && path[len-2] != 'm') || (path[len-1] != 'P' && path[len-1] != 'p'))
     {
         #ifdef SB3_CRASH_WHEN_ERROR
-            errx(EXIT_FAILURE, "READ_IMAGE: Bad file extension (%s) (expected '.BMP' extension (with lower or upper cases))\n", path);
+            errx(EXIT_FAILURE, "READ_IMAGE: Bad file extension (%s) (expected '.BMP' extension (with lower or upper cases))", path);
         #else
             last_error = SB3_BAD_EXTENSION_ERROR;
             return NULL;
@@ -191,7 +213,7 @@ Image_t* read_image(const char* path, Image_format_t format)
     if(!file)
     {
         #ifdef SB3_CRASH_WHEN_ERROR
-            errx(EXIT_FAILURE, "READ_IMAGE: Cannot open file at '%s'\n", path);
+            errx(EXIT_FAILURE, "READ_IMAGE: Cannot open file at '%s'", path);
         #else
             last_error = SB3_CANNOT_OPEN_FILE_ERROR;
             return NULL;
@@ -209,7 +231,7 @@ Image_t* read_image(const char* path, Image_format_t format)
     {
         fclose(file);
         #ifdef SB3_CRASH_WHEN_ERROR
-            errx(EXIT_FAILURE, "READ_IMAGE: Corrupted image => 'BM' signature not present at 2 first bytes of header bmp file\n");
+            errx(EXIT_FAILURE, "READ_IMAGE: Corrupted image => 'BM' signature not present at 2 first bytes of header bmp file");
         #else
             last_error = SB3_CORRUPTED_FILE_ERROR;
             return NULL;
@@ -227,7 +249,7 @@ Image_t* read_image(const char* path, Image_format_t format)
     {
         fclose(file);
         #ifdef SB3_CRASH_WHEN_ERROR
-            errx(EXIT_FAILURE, "READ_IMAGE: Unsupported bmp format\n");
+            errx(EXIT_FAILURE, "READ_IMAGE: Unsupported bmp format");
         #else
             last_error = SB3_UNSUPORTED_BMP_FORMAT_ERROR;
             return NULL;
@@ -238,7 +260,7 @@ Image_t* read_image(const char* path, Image_format_t format)
         {
             fclose(file);
             #ifdef SB3_CRASH_WHEN_ERROR
-                errx(EXIT_FAILURE, "READ_IMAGE: Unsupported bmp compression\n");
+                errx(EXIT_FAILURE, "READ_IMAGE: Unsupported bmp compression");
             #else
                 last_error = SB3_UNSUPORTED_BMP_FORMAT_ERROR;
                 return NULL;
@@ -291,7 +313,7 @@ Image_t* read_image(const char* path, Image_format_t format)
                         free(mono_pixels[i]);
                     free(mono_pixels);
                     #ifdef SB3_CRASH_WHEN_ERROR
-                        errx(EXIT_FAILURE, "READ_FILE: Incorrect Mono color format\n");
+                        errx(EXIT_FAILURE, "READ_FILE: Incorrect Mono color format");
                     #else
                         last_error = SB3_BAD_FORMAT_ERROR;
                         return NULL;
