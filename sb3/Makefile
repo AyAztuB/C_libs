@@ -1,13 +1,12 @@
-DYNAMIC = libchain_list.so
-STATIC = libchain_list.a
-HDR = chain_list.h
-SRC = chain_list.c
+DYNAMIC = libsb3.so
+STATIC = libsb3.a
+HDR = sb3.h
+SRC = sb3.c
 OBJ = $(SRC:.c=.o)
 CC = gcc
 CFLAGS = -Wall -Wextra -Werror -fPIC
 
 all: install
-
 
 dynamic: $(OBJ)
 	$(CC) -shared -o $(DYNAMIC) $(OBJ)
@@ -15,19 +14,18 @@ dynamic: $(OBJ)
 static: $(OBJ)
 	ar -rcs $(STATIC) $(OBJ)
 
+test: static
+	gcc main.c -L. -lsb3
+
 install: dynamic
 	cp $(DYNAMIC) /usr/lib/
 	cp $(HDR) /usr/include/
-	cp chain_list.t /usr/share/man/man3/chain_list.3
-	gzip /usr/share/man/man3/chain_list.3
-
-test: static
-	gcc main.c -L. -lchain_list
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c -o $@ $<
 
 clean:
-	$(RM) $(OBJ) $(DYNAMIC) $(STATIC) a.out
+	$(RM) $(OBJ) $(DYNAMIC) $(STATIC) a.out *.bmp
+
 
 
