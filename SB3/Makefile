@@ -27,6 +27,11 @@ install_debug:
 	cp $(DYNAMIC) /usr/lib/
 	cp $(HDR) /usr/include/
 
+test_debug:
+	$(CC) -DSB3_CRASH_WHEN_ERROR $(CFLAGS) -c -o sb3.o sb3.c
+	ar -rcs $(STATIC) sb3.o
+	gcc main.c -L. -lsb3
+
 %.o: %.c
 	$(CC) $(CFLAGS) -c -o $@ $<
 

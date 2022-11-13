@@ -27,8 +27,8 @@ int main(void)
     }
     return write_image("test.bmp", image);
     */
-    Image_t* image = read_image("test.bmp", SB3_RGB_FORMAT);
-    return write_image("copy.bmp", image);
+    Image_t* image = read_image("crash.bmp", SB3_RGB_FORMAT);
+    return write_image("test.bmp", image);
 }
 
 
