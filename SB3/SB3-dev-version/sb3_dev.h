@@ -36,7 +36,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-#define SB3_DEV_VERSION "1.30"
+#define SB3_DEV_VERSION "1.40"
 
 // ENUMS
 
@@ -76,8 +76,20 @@ typedef struct {
 
 // FUNCTIONS
 
+// last error message (don't reset it)
 char* SB3_GetError(void);
+// read and write bitmap files
 SB3_errors_t SB3_BMP_write_image(const char* path, SB3_image_t* image);
 SB3_image_t* SB3_BMP_read_image(const char* path, SB3_image_format_t format);
+// utils (create color, image / free color, image / get color in image / change color in image by a new one)
+SB3_RGBColor_t* SB3_NewRGB(uint8_t r, uint8_t g, uint8_t b);
+SB3_monoColor_t* SB3_NewMonoColor(uint8_t color);
+SB3_image_t* SB3_NewImage(int width, int height, SB3_image_format_t format);
+void SB3_FreeImage(SB3_image_t* image);
+void* SB3_GetPixel(SB3_image_t* image, int index);
+void* SB3_GetPixelPos(SB3_image_t* image, int x, int y);
+void SB3_SetPixel(SB3_image_t* image, void* pixel, int index);
+void SB3_SetPixelPos(SB3_image_t* image, void* pixel, int x, int y);
+// TODO
 
 #endif // __SB3_H__
