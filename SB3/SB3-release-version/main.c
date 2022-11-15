@@ -27,10 +27,10 @@ int main(void)
     }
     return write_image("test.bmp", image);
     */
-    Image_t* image = read_image("crash.bmp", SB3_RGB_FORMAT);
+    Image_t* image = read_image("test.bmp", SB3_RGB_FORMAT);
     if(!image)
         errx(EXIT_FAILURE, "%s", SB3_GetError());
-    if(write_image("test.bmp", image))
+    if(write_image("copy.bmp", image))
         errx(EXIT_FAILURE, "%s", SB3_GetError());
     return EXIT_SUCCESS;
 }

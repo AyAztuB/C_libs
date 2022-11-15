@@ -11,8 +11,16 @@ all: install
 dynamic: $(OBJ)
 	$(CC) -shared -o $(DYNAMIC) $(OBJ)
 
+dynamic_debug:
+	$(CC) -DSB3_CRASH_WHEN_ERROR $(CFLAGS) -c -o sb3.o sb3.c
+	$(CC) -shared -o $(DYNAMIC) sb3.o
+
 static: $(OBJ)
 	ar -rcs $(STATIC) $(OBJ)
+
+static_debug:
+	$(CC) -DSB3_CRASH_WHEN_ERROR $(CFLAGS) -c -o sb3.o sb3.c
+	ar -rcs $(STATIC) sb3.o
 
 test: static
 	gcc main.c -L. -lsb3
@@ -21,15 +29,11 @@ install: dynamic
 	cp $(DYNAMIC) /usr/lib/
 	cp $(HDR) /usr/include/
 
-install_debug:
-	$(CC) -DSB3_CRASH_WHEN_ERROR $(CFLAGS) -c -o sb3.o sb3.c
-	$(CC) -shared -o $(DYNAMIC) sb3.o
+install_debug: dynamic_debug
 	cp $(DYNAMIC) /usr/lib/
 	cp $(HDR) /usr/include/
 
-test_debug:
-	$(CC) -DSB3_CRASH_WHEN_ERROR $(CFLAGS) -c -o sb3.o sb3.c
-	ar -rcs $(STATIC) sb3.o
+test_debug: static_debug
 	gcc main.c -L. -lsb3
 
 %.o: %.c
