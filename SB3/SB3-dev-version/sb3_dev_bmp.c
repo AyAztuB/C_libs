@@ -70,11 +70,42 @@ SB3_errors_t SB3_BMP_write_image(const char* path, SB3_image_t* image) {
         #endif
     }
     
-    const int padding = ((4 - (image->w * 3) % 4) % 4);
+    int padding = ((4 - (image->w * 3) % 4) % 4);
+    if(image->format == SB3_MONO_COLOR_FORMAT)
+        padding = image->w % 4;
+    else if(image->format == SB3_BINARY_COLOR_FORMAT)
+        padding = ((image->w % 8) + (image->w / 8)%4) % 4;
+
+    int bits_per_pixels = 24;
+    int color_table_size = 0;
+    if(image->format == SB3_MONO_COLOR_FORMAT)
+    { color_table_size = 256; bits_per_pixels = 8; }
+    else if(image->format == SB3_BINARY_COLOR_FORMAT)
+    { color_table_size = 2; bits_per_pixels = 1; }
+
+    uint8_t color_table[color_table_size * 4];
     
+    if(color_table_size == 2)
+    {
+        for(int i = 0; i < 2; i++)
+        {
+            color_table[i*4+0] = color_table[i*4+1] = color_table[i*4+2] = i*255;
+            color_table[i*4+3] = 0;
+        }
+    }
+    else
+    {
+        for(uint8_t i = 0; i < color_table_size; i++)
+        {
+            color_table[i*4+0] = color_table[i*4+1] = color_table[i*4+2] = i;
+            color_table[i*4+3] = 0;
+        }
+    }
+        
     const int file_header_size = 14;
     const int info_header_size = 40;
-    const int file_size = file_header_size + info_header_size + image->h * image->w * 3 + padding * image->h;
+    const int file_size = file_header_size + info_header_size + color_table_size + image->h * image->w * ((double)bits_per_pixels / 8.) + padding * image->h;
+    const int pixel_array_offset = file_header_size + info_header_size + color_table_size;
     
     // FILE HEADER
     uint8_t file_header[file_header_size];
@@ -94,10 +125,10 @@ SB3_errors_t SB3_BMP_write_image(const char* path, SB3_image_t* image) {
     file_header[8] = 0;
     file_header[9] = 0;
     // file offset to pixel array
-    file_header[10] = file_header_size + info_header_size;
-    file_header[11] = 0;
-    file_header[12] = 0;
-    file_header[13] = 0;
+    file_header[10] = pixel_array_offset;
+    file_header[11] = pixel_array_offset >> 8;
+    file_header[12] = pixel_array_offset >> 16;
+    file_header[13] = pixel_array_offset >> 24;
     
     // INFO HEADER
     uint8_t info_header[info_header_size];
@@ -121,7 +152,7 @@ SB3_errors_t SB3_BMP_write_image(const char* path, SB3_image_t* image) {
     info_header[12] = 1;
     info_header[13] = 0;
     // bits per pixels (24 for 3 bytes(RGB))
-    info_header[14] = 24;
+    info_header[14] = bits_per_pixels;
     info_header[15] = 0;
     // compression (BI_RGB => no compression methodes => 0)
     info_header[16] = 0;
@@ -144,10 +175,10 @@ SB3_errors_t SB3_BMP_write_image(const char* path, SB3_image_t* image) {
     info_header[30] = 0;
     info_header[31] = 0;
     // color palette (0 to default)
-    info_header[32] = 0;
-    info_header[33] = 0;
-    info_header[34] = 0;
-    info_header[35] = 0;
+    info_header[32] = 0; //color_table_size;
+    info_header[33] = 0; //color_table_size >> 8;
+    info_header[34] = 0; //color_table_size >> 16;
+    info_header[35] = 0; //color_table_size >> 24;
     // important colors (generally ignored)
     info_header[36] = 0;
     info_header[37] = 0;
@@ -158,6 +189,8 @@ SB3_errors_t SB3_BMP_write_image(const char* path, SB3_image_t* image) {
         fputc(file_header[i], file);
     for(int i = 0; i < info_header_size; i++)
         fputc(info_header[i], file);
+    for(int i = 0; i < color_table_size*4; i++)
+        fputc(color_table[i], file);
     
     // IMAGE DATA
     for(int y = 0; y < image->h; y++)
@@ -169,14 +202,38 @@ SB3_errors_t SB3_BMP_write_image(const char* path, SB3_image_t* image) {
             {
                 SB3_RGBColor_t* color = image->rgb_pixels[y * image->w + x];
                 r = color->r; g = color->g; b = color->b;
+                fputc(b, file);
+                fputc(g, file);
+                fputc(r, file);
+            }
+            else if(image->format == SB3_MONO_COLOR_FORMAT)
+            {
+                fputc(image->mono_pixels[y*image->w+x]->color, file);
             }
             else
             {
-                r = g = b = image->mono_pixels[y * image->w + x]->color;
+                uint8_t to_put = 0;
+                for(int i = 0; i < 8 && x+i < image->w; i++)
+                {
+                    uint color = image->mono_pixels[y*image->w+x+i]->color;
+                    if(color == 0)
+                        to_put = to_put | (0 << (7-i));
+                    else if(color == 255)
+                        to_put = to_put | (1 << (7-i));
+                    else
+                    {
+                        fclose(file);
+                        #ifdef SB3_CRASH_WHEN_ERROR
+                            errx(EXIT_FAILURE, "WRITE_IMAGE: Bad binary format for image not only white and black");
+                        #else
+                            last_error = SB3_BAD_FORMAT_ERROR;
+                            return SB3_BAD_FORMAT_ERROR;
+                        #endif
+                    }
+                }
+                fputc(to_put, file);
+                x += 7;
             }
-            fputc(b, file);
-            fputc(g, file);
-            fputc(r, file);
         }
         for(int i = 0; i < padding; i++)
             fputc(0, file);

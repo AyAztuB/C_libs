@@ -3,8 +3,7 @@
 
 int main(void)
 {
-    SB3_image_t* image = SB3_BMP_read_image("test1b.bmp", SB3_RGB_FORMAT);
-    SB3_BMP_write_image("copy.bmp", image);
+    SB3_BMP_write_image("copy.bmp", SB3_BMP_read_image("koukou1b_blackandwhite.bmp", SB3_BINARY_COLOR_FORMAT));
     return 0;
 }
 
