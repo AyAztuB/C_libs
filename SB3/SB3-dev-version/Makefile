@@ -1,7 +1,7 @@
 DYNAMIC = libsb3_dev.so
 STATIC = libsb3_dev.a
 HDR = sb3_dev.h
-SRC = sb3_dev.c
+SRC = $(wildcard sb3_dev*.c)
 OBJ = $(SRC:.c=.o)
 CC = gcc
 CFLAGS = -DSB3_CRASH_WHEN_ERROR -Wall -Wextra -Werror -fPIC

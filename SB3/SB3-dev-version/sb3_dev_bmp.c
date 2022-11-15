@@ -28,7 +28,7 @@ char* SB3_GetError(void)
     }
 }
 
-SB3_errors_t write_image(const char* path, Image_t* image) {
+SB3_errors_t SB3_BMP_write_image(const char* path, Image_t* image) {
     if(!image)
     {
         #ifdef SB3_CRASH_WHEN_ERROR
@@ -202,7 +202,7 @@ typedef struct {
 } BMP_info_header_t;
 
 
-Image_t* read_image(const char* path, Image_format_t format)
+Image_t* SB3_BMP_read_image(const char* path, Image_format_t format)
 {
     if(!path)
     {
@@ -381,10 +381,10 @@ Image_t* read_image(const char* path, Image_format_t format)
             }
             else
             {
-                uint8_t x = fgetc(file);
+                uint8_t uwu = fgetc(file);
                 if(bit_color == 8)
                 {
-                    if(x >= cool_size)
+                    if(uwu >= header.colors_used)
                     {
                         free(color_table);
                         fclose(file);
@@ -399,28 +399,28 @@ Image_t* read_image(const char* path, Image_format_t format)
                             return NULL;
                         #endif
                     }
-                    b = color_table[x*4+0];
-                    g = color_table[x*4+1];
-                    r = color_table[x*4+2];
+                    b = color_table[uwu*4+0];
+                    g = color_table[uwu*4+1];
+                    r = color_table[uwu*4+2];
                 }
                 else
                 {
                     for(int i = 0; i*bit_color < 8 && x+i < width; i++)
                     {
-                        int alcohol = x >> (i * bit_color);
+                        uint alcohol = uwu >> (8 - bit_color - (i * bit_color));
                         switch(bit_color)
                         {
                             case 4:
-                                alcohol = alcohol & 1111;
+                                alcohol = alcohol & 0b1111;
                                 break;
                             case 2:
-                                alcohol = alcohol & 11;
+                                alcohol = alcohol & 0b11;
                                 break;
                             case 1:
-                                alcohol = alcohol & 1;
+                                alcohol = alcohol & 0b1;
                                 break;
                         }
-                        if(alcohol >= cool_size)
+                        if(alcohol >= header.colors_used)
                         {
                             free(color_table);
                             fclose(file);
@@ -429,7 +429,7 @@ Image_t* read_image(const char* path, Image_format_t format)
                             else
                             { for(int k = 0; k < y*width+x+i; k++) free(mono_pixels[k]); free(mono_pixels); }
                             #ifdef SB3_CRASH_WHEN_ERROR
-                                errx(EXIT_FAILURE, "READ_FILE: Corrupted color table size");
+                                errx(EXIT_FAILURE, "READ_FILE: Corrupted color table size (color_table_size = %d and index = %d)", header.colors_used, alcohol);
                             #else
                                 last_error = SB3_CORRUPTED_FILE_ERROR;
                                 return NULL;

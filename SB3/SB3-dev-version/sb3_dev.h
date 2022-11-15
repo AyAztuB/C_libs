@@ -42,7 +42,7 @@ typedef struct {
 // FUNCTIONS
 
 char* SB3_GetError(void);
-SB3_errors_t write_image(const char* path, Image_t* image);
-Image_t* read_image(const char* path, Image_format_t format);
+SB3_errors_t SB3_BMP_write_image(const char* path, Image_t* image);
+Image_t* SB3_BMP_read_image(const char* path, Image_format_t format);
 
 #endif // __SB3_H__
