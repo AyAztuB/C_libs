@@ -30,54 +30,37 @@
  */
 
 
-#ifndef __SB3_H__
-#define __SB3_H__
+#include "sb3_dev.h"
+#include <err.h>
 
-#include <stdlib.h>
-#include <stdint.h>
 
-#define SB3_DEV_VERSION "1.30"
+SB3_errors_t last_error = SB3_SUCCESS_EXIT;
 
-// ENUMS
+char* SB3_GetError(void)
+{
+    switch (last_error)
+    {
+        case SB3_NULL_PATH_ERROR:
+            return "image path was NULL";
+        case SB3_UNSUPORTED_BMP_FORMAT_ERROR:
+            return "the bmp image passed in parameter has an unsuported format";
+        case SB3_NULL_IMAGE_ERROR:
+            return "image passed in parameter was NULL";
+        case SB3_BAD_EXTENSION_ERROR:
+            return "the path given in parameter hasn't '.bmp' extension";
+        case SB3_BAD_FORMAT_ERROR:
+            return "the format precised wasn't correct";
+        case SB3_CORRUPTED_FILE_ERROR:
+            return "try to read bmp image who doesn't have 'BM' signature at first 2 bytes";
+        case SB3_CANNOT_OPEN_FILE_ERROR:
+            return "cannot open given file";
+        default:
+            return "THERE IS NO FUCKING ERROR: WHY DO YOU WANT A MESSAGE ERROR WHEN THERE IS NO ERROR ?";
+    }
+}
 
-typedef enum {
-    SB3_RGB_FORMAT,
-    SB3_MONO_COLOR_FORMAT,
-    SB3_BINARY_COLOR_FORMAT, // only white and black
-} SB3_image_format_t;
+void SB3_SetError(SB3_errors_t error)
+{
+    last_error = error;
+}
 
-typedef enum {
-    SB3_SUCCESS_EXIT,
-    SB3_CANNOT_OPEN_FILE_ERROR,
-    SB3_CORRUPTED_FILE_ERROR,
-    SB3_BAD_FORMAT_ERROR,
-    SB3_BAD_EXTENSION_ERROR,
-    SB3_NULL_IMAGE_ERROR,
-    SB3_UNSUPORTED_BMP_FORMAT_ERROR,
-    SB3_NULL_PATH_ERROR,
-} SB3_errors_t;
-
-// STRUCTS
-
-typedef struct {
-    uint8_t r, g, b;
-} SB3_RGBColor_t;
-
-typedef struct {
-    uint8_t color;
-} SB3_monoColor_t;
-
-typedef struct {
-    int w, h;
-    SB3_image_format_t format;
-    SB3_RGBColor_t** rgb_pixels;
-    SB3_monoColor_t** mono_pixels;
-} SB3_image_t;
-
-// FUNCTIONS
-
-char* SB3_GetError(void);
-SB3_errors_t SB3_BMP_write_image(const char* path, SB3_image_t* image);
-SB3_image_t* SB3_BMP_read_image(const char* path, SB3_image_format_t format);
-
-#endif // __SB3_H__
