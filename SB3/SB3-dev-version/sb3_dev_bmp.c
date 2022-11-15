@@ -28,7 +28,7 @@ char* SB3_GetError(void)
     }
 }
 
-SB3_errors_t SB3_BMP_write_image(const char* path, Image_t* image) {
+SB3_errors_t SB3_BMP_write_image(const char* path, SB3_image_t* image) {
     if(!image)
     {
         #ifdef SB3_CRASH_WHEN_ERROR
@@ -167,7 +167,7 @@ SB3_errors_t SB3_BMP_write_image(const char* path, Image_t* image) {
             uint8_t r, g, b;
             if(image->format == SB3_RGB_FORMAT)
             {
-                RGBColor_t* color = image->rgb_pixels[y * image->w + x];
+                SB3_RGBColor_t* color = image->rgb_pixels[y * image->w + x];
                 r = color->r; g = color->g; b = color->b;
             }
             else
@@ -186,23 +186,7 @@ SB3_errors_t SB3_BMP_write_image(const char* path, Image_t* image) {
     return SB3_SUCCESS_EXIT;
 }
 
-
-typedef struct {
-    uint32_t header_size;
-    uint32_t image_w;
-    uint32_t image_h;
-    int16_t planes;
-    int16_t bit_count;
-    uint32_t compression;
-    uint32_t image_size;
-    int32_t X_pixels_per_meter;
-    int32_t Y_pixels_per_meter;
-    uint32_t colors_used;
-    uint32_t colors_important;
-} BMP_info_header_t;
-
-
-Image_t* SB3_BMP_read_image(const char* path, Image_format_t format)
+SB3_image_t* SB3_BMP_read_image(const char* path, SB3_image_format_t format)
 {
     if(!path)
     {
@@ -287,33 +271,35 @@ Image_t* SB3_BMP_read_image(const char* path, Image_format_t format)
     */
     int width = info_header[4] + (info_header[5] << 8) + (info_header[6] << 16) + (info_header[7] << 24);
     int height = info_header[8] + (info_header[9] << 8) + (info_header[10] << 16) + (info_header[11] << 24);
-
-    BMP_info_header_t header = {
-        .header_size = info_header_size,
-        .image_w = width,
-        .image_h = height,
-        .planes = 1,
-        .bit_count = info_header[14] + (info_header[15] << 8),
-        .compression = info_header[16] + (info_header[17] << 8) + (info_header[18] << 16) + (info_header[19] << 24),
-        .image_size = info_header[20] + (info_header[21] << 8) + (info_header[22] << 16) + (info_header[23] << 24),
-        .X_pixels_per_meter = 0, // skipped
-        .Y_pixels_per_meter = 0, // skipped
-        .colors_used = info_header[32] + (info_header[33] << 8) + (info_header[34] << 16) + (info_header[35] << 24),
-        .colors_important = 0, // skipped
-    };
     
-    if(header.compression != 0)
+    uint32_t compression = info_header[16] + (info_header[17] << 8) + (info_header[18] << 16) + (info_header[19] << 24);
+    // uint32_t image_size = info_header[20] + (info_header[21] << 8) + (info_header[22] << 16) + (info_header[23] << 24);
+    
+    if(compression != 0)
     {
         fclose(file);
         #ifdef SB3_CRASH_WHEN_ERROR
-            errx(EXIT_FAILURE, "READ_IMAGE: Unsuported bmp image format (unsuported bmp compression)[received: %d compression value]", header.compression);
+            errx(EXIT_FAILURE, "READ_IMAGE: Unsuported bmp image format (unsuported bmp compression)[received: %d compression value]", compression);
         #else
             last_error = SB3_UNSUPORTED_BMP_FORMAT_ERROR;
             return NULL;
         #endif
     }
     
-    int bit_color = header.bit_count;
+    uint32_t colors_used = info_header[32] + (info_header[33] << 8) + (info_header[34] << 16) + (info_header[35] << 24);
+    int bit_color = info_header[14] + (info_header[15] << 8);
+    
+    if(format == SB3_BINARY_COLOR_FORMAT && bit_color != 1)
+    {
+        fclose(file);
+        #ifdef SB3_CRASH_WHEN_ERROR
+            errx(EXIT_FAILURE, "READ_IMAGE: Bad format: 1bit per pixels <= BINARY_COLOR_FORMAT");
+        #else
+            last_error = SB3_BAD_FORMAT_ERROR;
+            return NULL;
+        #endif
+    }
+    
     if(bit_color != 1 && bit_color != 2 && bit_color != 4 && bit_color != 8 && bit_color != 24)
     {
         fclose(file);
@@ -338,23 +324,41 @@ Image_t* SB3_BMP_read_image(const char* path, Image_format_t format)
     }
     
     uint8_t* color_table = NULL;
-    if(header.colors_used == 0)
-        header.colors_used = 2<<(bit_color - 1);
-    int cool_size = header.colors_used * 4;
+    if(colors_used == 0)
+        colors_used = 2<<(bit_color - 1);
+    int cool_size = colors_used * 4;
     if(bit_color < 16)
     {
         color_table = malloc(cool_size * sizeof(uint8_t));
         for(int i = 0; i < cool_size; i++)
             color_table[i] = fgetc(file);
     }
+    if(format == SB3_BINARY_COLOR_FORMAT)
+    {
+        for(int i = 0; i < bit_color; i++)
+        {
+            uint8_t r = color_table[i*4+2], g = color_table[i*4+1], b = color_table[i*4+0];
+            if(r!=g || g!=b || (r!=0 && r!=255))
+            {
+                fclose(file);
+                free(color_table);
+                #ifdef SB3_CRASH_WHEN_ERROR
+                    errx(EXIT_FAILURE, "READ_IMAGE: Bad format: expected black and white image");
+                #else
+                    last_error = SB3_BAD_FORMAT_ERROR;
+                    return NULL;
+                #endif
+            }
+        }
+    }
 
-    RGBColor_t** rgb_pixels = NULL;
-    MonoColor_t** mono_pixels = NULL;
+    SB3_RGBColor_t** rgb_pixels = NULL;
+    SB3_monoColor_t** mono_pixels = NULL;
     
     if(format == SB3_RGB_FORMAT)
-        rgb_pixels = malloc(width*height*sizeof(RGBColor_t*));
+        rgb_pixels = malloc(width*height*sizeof(SB3_RGBColor_t*));
     else
-        mono_pixels = malloc(width*height*sizeof(MonoColor_t*));
+        mono_pixels = malloc(width*height*sizeof(SB3_monoColor_t*));
 
     int padding = 0;
     if(bit_color == 24)
@@ -384,7 +388,7 @@ Image_t* SB3_BMP_read_image(const char* path, Image_format_t format)
                 uint8_t uwu = fgetc(file);
                 if(bit_color == 8)
                 {
-                    if(uwu >= header.colors_used)
+                    if(uwu >= colors_used)
                     {
                         free(color_table);
                         fclose(file);
@@ -420,7 +424,7 @@ Image_t* SB3_BMP_read_image(const char* path, Image_format_t format)
                                 alcohol = alcohol & 0b1;
                                 break;
                         }
-                        if(alcohol >= header.colors_used)
+                        if(alcohol >= colors_used)
                         {
                             free(color_table);
                             fclose(file);
@@ -429,7 +433,7 @@ Image_t* SB3_BMP_read_image(const char* path, Image_format_t format)
                             else
                             { for(int k = 0; k < y*width+x+i; k++) free(mono_pixels[k]); free(mono_pixels); }
                             #ifdef SB3_CRASH_WHEN_ERROR
-                                errx(EXIT_FAILURE, "READ_FILE: Corrupted color table size (color_table_size = %d and index = %d)", header.colors_used, alcohol);
+                                errx(EXIT_FAILURE, "READ_FILE: Corrupted color table size (color_table_size = %d and index = %d)", colors_used, alcohol);
                             #else
                                 last_error = SB3_CORRUPTED_FILE_ERROR;
                                 return NULL;
@@ -440,8 +444,8 @@ Image_t* SB3_BMP_read_image(const char* path, Image_format_t format)
                         r = color_table[alcohol*4+2];
                         if(format == SB3_RGB_FORMAT)
                         {
-                            RGBColor_t* color = malloc(sizeof(*color));
-                            *color = (RGBColor_t) {
+                            SB3_RGBColor_t* color = malloc(sizeof(*color));
+                            *color = (SB3_RGBColor_t) {
                                 .r = r,
                                 .g = g,
                                 .b = b,
@@ -452,7 +456,7 @@ Image_t* SB3_BMP_read_image(const char* path, Image_format_t format)
                         {
                             if(r==g&&g==b)
                             {
-                                MonoColor_t* color = malloc(sizeof(*color));
+                                SB3_monoColor_t* color = malloc(sizeof(*color));
                                 color->color = r;
                                 mono_pixels[y*width+x+i] = color;
                             }
@@ -477,8 +481,8 @@ Image_t* SB3_BMP_read_image(const char* path, Image_format_t format)
             }
             if(format == SB3_RGB_FORMAT)
             {
-                RGBColor_t* color = malloc(sizeof(*color));
-                *color = (RGBColor_t) {
+                SB3_RGBColor_t* color = malloc(sizeof(*color));
+                *color = (SB3_RGBColor_t) {
                     .r = r,
                     .g = g,
                     .b = b,
@@ -489,7 +493,7 @@ Image_t* SB3_BMP_read_image(const char* path, Image_format_t format)
             {
                 if(r == g && g == b)
                 {
-                    MonoColor_t* color = malloc(sizeof(*color));
+                    SB3_monoColor_t* color = malloc(sizeof(*color));
                     color->color = r;
                     mono_pixels[y * width + x] = color;
                 }
@@ -515,8 +519,8 @@ Image_t* SB3_BMP_read_image(const char* path, Image_format_t format)
     }
     fclose(file);
 
-    Image_t* image = malloc(sizeof(*image));
-    *image = (Image_t) {
+    SB3_image_t* image = malloc(sizeof(*image));
+    *image = (SB3_image_t) {
         .w = width,
         .h = height,
         .format = format,

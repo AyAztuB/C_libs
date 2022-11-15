@@ -4,12 +4,15 @@
 #include <stdlib.h>
 #include <stdint.h>
 
+#define SB3_DEV_VERSION "1.20"
+
 // ENUMS
 
 typedef enum {
     SB3_RGB_FORMAT,
     SB3_MONO_COLOR_FORMAT,
-} Image_format_t;
+    SB3_BINARY_COLOR_FORMAT, // only white and black
+} SB3_image_format_t;
 
 typedef enum {
     SB3_SUCCESS_EXIT,
@@ -26,23 +29,23 @@ typedef enum {
 
 typedef struct {
     uint8_t r, g, b;
-} RGBColor_t;
+} SB3_RGBColor_t;
 
 typedef struct {
     uint8_t color;
-} MonoColor_t;
+} SB3_monoColor_t;
 
 typedef struct {
     int w, h;
-    Image_format_t format;
-    RGBColor_t** rgb_pixels;
-    MonoColor_t** mono_pixels;
-} Image_t;
+    SB3_image_format_t format;
+    SB3_RGBColor_t** rgb_pixels;
+    SB3_monoColor_t** mono_pixels;
+} SB3_image_t;
 
 // FUNCTIONS
 
 char* SB3_GetError(void);
-SB3_errors_t SB3_BMP_write_image(const char* path, Image_t* image);
-Image_t* SB3_BMP_read_image(const char* path, Image_format_t format);
+SB3_errors_t SB3_BMP_write_image(const char* path, SB3_image_t* image);
+SB3_image_t* SB3_BMP_read_image(const char* path, SB3_image_format_t format);
 
 #endif // __SB3_H__
