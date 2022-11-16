@@ -30,8 +30,8 @@
  */
 
 
-#ifndef __SB3_H__
-#define __SB3_H__
+#ifndef __SB3_DEV_H__
+#define __SB3_DEV_H__
 
 #include <stdlib.h>
 #include <stdint.h>
@@ -41,55 +41,55 @@
 // ENUMS
 
 typedef enum {
-    SB3_RGB_FORMAT,
-    SB3_MONO_COLOR_FORMAT,
-    SB3_BINARY_COLOR_FORMAT, // only white and black
-} SB3_image_format_t;
+    SB3_DEV_RGB_FORMAT,
+    SB3_DEV_MONO_COLOR_FORMAT,
+    SB3_DEV_BINARY_COLOR_FORMAT, // only white and black
+} SB3_DEV_image_format_t;
 
 typedef enum {
-    SB3_SUCCESS_EXIT,
-    SB3_CANNOT_OPEN_FILE_ERROR,
-    SB3_CORRUPTED_FILE_ERROR,
-    SB3_BAD_FORMAT_ERROR,
-    SB3_BAD_EXTENSION_ERROR,
-    SB3_NULL_IMAGE_ERROR,
-    SB3_UNSUPORTED_BMP_FORMAT_ERROR,
-    SB3_NULL_PATH_ERROR,
-} SB3_errors_t;
+    SB3_DEV_SUCCESS_EXIT,
+    SB3_DEV_CANNOT_OPEN_FILE_ERROR,
+    SB3_DEV_CORRUPTED_FILE_ERROR,
+    SB3_DEV_BAD_FORMAT_ERROR,
+    SB3_DEV_BAD_EXTENSION_ERROR,
+    SB3_DEV_NULL_IMAGE_ERROR,
+    SB3_DEV_UNSUPORTED_BMP_FORMAT_ERROR,
+    SB3_DEV_NULL_PATH_ERROR,
+} SB3_DEV_errors_t;
 
 // STRUCTS
 
 typedef struct {
     uint8_t r, g, b;
-} SB3_RGBColor_t;
+} SB3_DEV_RGBColor_t;
 
 typedef struct {
     uint8_t color;
-} SB3_monoColor_t;
+} SB3_DEV_monoColor_t;
 
 typedef struct {
     int w, h;
-    SB3_image_format_t format;
-    SB3_RGBColor_t** rgb_pixels;
-    SB3_monoColor_t** mono_pixels;
-} SB3_image_t;
+    SB3_DEV_image_format_t format;
+    SB3_DEV_RGBColor_t** rgb_pixels;
+    SB3_DEV_monoColor_t** mono_pixels;
+} SB3_DEV_image_t;
 
 // FUNCTIONS
 
 // last error message (don't reset it)
-char* SB3_GetError(void);
+char* SB3_DEV_GetError(void);
 // read and write bitmap files
-SB3_errors_t SB3_BMP_write_image(const char* path, SB3_image_t* image);
-SB3_image_t* SB3_BMP_read_image(const char* path, SB3_image_format_t format);
+SB3_DEV_errors_t SB3_DEV_BMP_write_image(const char* path, SB3_DEV_image_t* image);
+SB3_DEV_image_t* SB3_DEV_BMP_read_image(const char* path, SB3_DEV_image_format_t format);
 // utils (create color, image / free color, image / get color in image / change color in image by a new one)
-SB3_RGBColor_t* SB3_NewRGB(uint8_t r, uint8_t g, uint8_t b);
-SB3_monoColor_t* SB3_NewMonoColor(uint8_t color);
-SB3_image_t* SB3_NewImage(int width, int height, SB3_image_format_t format);
-void SB3_FreeImage(SB3_image_t* image);
-void* SB3_GetPixel(SB3_image_t* image, int index);
-void* SB3_GetPixelPos(SB3_image_t* image, int x, int y);
-void SB3_SetPixel(SB3_image_t* image, void* pixel, int index);
-void SB3_SetPixelPos(SB3_image_t* image, void* pixel, int x, int y);
+SB3_DEV_RGBColor_t* SB3_DEV_NewRGB(uint8_t r, uint8_t g, uint8_t b);
+SB3_DEV_monoColor_t* SB3_DEV_NewMonoColor(uint8_t color);
+SB3_DEV_image_t* SB3_DEV_NewImage(int width, int height, SB3_DEV_image_format_t format);
+void SB3_DEV_FreeImage(SB3_DEV_image_t* image);
+void* SB3_DEV_GetPixel(SB3_DEV_image_t* image, int index);
+void* SB3_DEV_GetPixelPos(SB3_DEV_image_t* image, int x, int y);
+void SB3_DEV_SetPixel(SB3_DEV_image_t* image, void* pixel, int index);
+void SB3_DEV_SetPixelPos(SB3_DEV_image_t* image, void* pixel, int x, int y);
 // TODO
 
-#endif // __SB3_H__
+#endif // __SB3_DEV_H__

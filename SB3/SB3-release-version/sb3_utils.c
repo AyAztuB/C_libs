@@ -30,8 +30,7 @@
  */
 
 
-#include "sb3_dev.h"
-#include <err.h>
+#include "sb3.h"
 
 
 SB3_errors_t last_error = SB3_SUCCESS_EXIT;
