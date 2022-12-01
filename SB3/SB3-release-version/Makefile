@@ -29,10 +29,14 @@ test_debug: static_debug
 install: dynamic
 	cp $(DYNAMIC) /usr/lib/
 	cp $(HDR) /usr/include/
+	cp sb3.t /usr/share/man/man3/sb3.3
+	gzip /usr/share/man/man3/sb3.3
 
 install_debug: dynamic_debug
 	cp $(DYNAMIC) /usr/lib/
 	cp $(HDR) /usr/include/
+	cp sb3.t /usr/share/man/man3/sb3.3
+	gzip /usr/share/man/man3/sb3.3
 
 %.o: %.c
 	$(CC) $(CFLAGS) -c -o $@ $<
