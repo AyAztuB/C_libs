@@ -4,7 +4,7 @@ HDR = sb3_dev.h
 SRC = $(wildcard sb3_dev*.c)
 OBJ = $(SRC:.c=.o)
 CC = gcc
-CFLAGS = -DSB3_CRASH_WHEN_ERROR -Wall -Wextra -Werror -fPIC
+CFLAGS = -DSB3_CRASH_WHEN_ERROR -Wall -Wextra -Werror -fPIC -lm
 
 all: install
 

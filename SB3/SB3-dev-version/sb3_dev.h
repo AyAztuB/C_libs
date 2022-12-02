@@ -36,7 +36,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-#define SB3_DEV_VERSION "1.40"
+#define SB3_DEV_VERSION "2.00"
 
 // ENUMS
 
@@ -74,6 +74,11 @@ typedef struct {
     SB3_DEV_monoColor_t** mono_pixels;
 } SB3_DEV_image_t;
 
+typedef struct {
+    unsigned int dim;
+    double* kernel;
+} SB3_DEV_kernel_t;
+
 // FUNCTIONS
 
 // last error message (don't reset it)
@@ -90,6 +95,12 @@ void* SB3_DEV_GetPixel(SB3_DEV_image_t* image, int index);
 void* SB3_DEV_GetPixelPos(SB3_DEV_image_t* image, int x, int y);
 void SB3_DEV_SetPixel(SB3_DEV_image_t* image, void* pixel, int index);
 void SB3_DEV_SetPixelPos(SB3_DEV_image_t* image, void* pixel, int x, int y);
+// image processing
+int* SB3_DEV_convolution(SB3_DEV_image_t* image, SB3_DEV_kernel_t* kernel);
+void SB3_DEV_apply_convolution(SB3_DEV_image_t* image, SB3_DEV_kernel_t* kernel);
+SB3_DEV_image_t* SB3_DEV_grayscale(SB3_DEV_image_t* image, double boost);
+SB3_DEV_errors_t SB3_DEV_image_to_grayscale(SB3_DEV_image_t* image, double boost);
+SB3_DEV_kernel_t* SB3_DEV_gaussian_kernel(int kernel_radius);
 // TODO
 
 #endif // __SB3_DEV_H__
