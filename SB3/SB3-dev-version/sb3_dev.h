@@ -37,6 +37,7 @@
 #include <stdint.h>
 
 #define SB3_DEV_VERSION "2.00"
+#define SB3_DEV_CRASH_WHEN_ERROR
 
 // ENUMS
 
@@ -68,7 +69,8 @@ typedef struct {
 } SB3_DEV_monoColor_t;
 
 typedef struct {
-    int w, h;
+    union {int w; int width;};
+    union {int h; int height;};
     SB3_DEV_image_format_t format;
     SB3_DEV_RGBColor_t** rgb_pixels;
     SB3_DEV_monoColor_t** mono_pixels;
@@ -96,11 +98,14 @@ void* SB3_DEV_GetPixelPos(SB3_DEV_image_t* image, int x, int y);
 void SB3_DEV_SetPixel(SB3_DEV_image_t* image, void* pixel, int index);
 void SB3_DEV_SetPixelPos(SB3_DEV_image_t* image, void* pixel, int x, int y);
 // image processing
+void SB3_DEV_FreeKernel(SB3_DEV_kernel_t* kernel);
 int* SB3_DEV_convolution(SB3_DEV_image_t* image, SB3_DEV_kernel_t* kernel);
 void SB3_DEV_apply_convolution(SB3_DEV_image_t* image, SB3_DEV_kernel_t* kernel);
 SB3_DEV_image_t* SB3_DEV_grayscale(SB3_DEV_image_t* image, double boost);
 SB3_DEV_errors_t SB3_DEV_image_to_grayscale(SB3_DEV_image_t* image, double boost);
-SB3_DEV_kernel_t* SB3_DEV_gaussian_kernel(int kernel_radius);
+SB3_DEV_kernel_t* SB3_DEV_gaussian_kernel(unsigned int kernel_radius);
+SB3_DEV_image_t* SB3_DEV_gaussian_blur(SB3_DEV_image_t* image, unsigned int kernel_radius);
+void SB3_DEV_apply_gaussian_blur(SB3_DEV_image_t* image, unsigned int kernel_radius);
 // TODO
 
 #endif // __SB3_DEV_H__

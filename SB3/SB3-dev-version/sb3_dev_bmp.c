@@ -114,8 +114,8 @@ SB3_DEV_errors_t SB3_DEV_BMP_write_image(const char* path, SB3_DEV_image_t* imag
         
     const int file_header_size = 14;
     const int info_header_size = 40;
-    const int file_size = file_header_size + info_header_size + color_table_size + image->h * image->w * ((double)bits_per_pixels / 8.) + padding * image->h;
-    const int pixel_array_offset = file_header_size + info_header_size + color_table_size;
+    const int file_size = file_header_size + info_header_size + color_table_size * 4 + image->h * image->w * ((double)bits_per_pixels / 8.) + padding * image->h;
+    const int pixel_array_offset = file_header_size + info_header_size + color_table_size * 4;
     
     // FILE HEADER
     uint8_t file_header[file_header_size];
@@ -185,10 +185,10 @@ SB3_DEV_errors_t SB3_DEV_BMP_write_image(const char* path, SB3_DEV_image_t* imag
     info_header[30] = 0;
     info_header[31] = 0;
     // color palette (0 to default)
-    info_header[32] = 0; //color_table_size;
-    info_header[33] = 0; //color_table_size >> 8;
-    info_header[34] = 0; //color_table_size >> 16;
-    info_header[35] = 0; //color_table_size >> 24;
+    info_header[32] = color_table_size;
+    info_header[33] = color_table_size >> 8;
+    info_header[34] = color_table_size >> 16;
+    info_header[35] = color_table_size >> 24;
     // important colors (generally ignored)
     info_header[36] = 0;
     info_header[37] = 0;

@@ -35,6 +35,12 @@
 
 void SB3_DEV_SetError(SB3_DEV_errors_t error);
 
+void SB3_DEV_FreeKernel(SB3_DEV_kernel_t* kernel)
+{
+    free(kernel->kernel);
+    free(kernel);
+}
+
 int* SB3_DEV_convolution(SB3_DEV_image_t* image, SB3_DEV_kernel_t* kernel)
 {
     char is_rgb = image->format == SB3_DEV_RGB_FORMAT;
@@ -115,7 +121,7 @@ uint8_t __SB3_DEV_grayscale_boost(uint8_t color, double num)
 
 SB3_DEV_monoColor_t* __SB3_DEV_pixel_to_grayscale(SB3_DEV_RGBColor_t* color, double boost)
 {
-    uint8_t average = 0.3 * color->r + 0.59 * color->g + 0.11 * color->b;
+    uint8_t average = (uint8_t)(0.3 * (double)color->r + 0.59 * (double)color->g + 0.11 * (double)color->b);
     if(boost) average = __SB3_DEV_grayscale_boost(average, boost);
     return SB3_DEV_NewMonoColor(average);
 }
@@ -156,7 +162,7 @@ SB3_DEV_errors_t SB3_DEV_image_to_grayscale(SB3_DEV_image_t* image, double boost
     }
 
     image->format = SB3_DEV_MONO_COLOR_FORMAT;
-    image->mono_pixels = malloc(image->w * image->h * sizeof(SB3_DEV_monoColor_t));
+    image->mono_pixels = malloc(image->w * image->h * sizeof(SB3_DEV_monoColor_t*));
     for(int i = 0; i < image->w * image->h; i++)
     {
         image->mono_pixels[i] = __SB3_DEV_pixel_to_grayscale(image->rgb_pixels[i], boost);
@@ -174,7 +180,7 @@ double __SB3_DEV_gaussian_value(double x, double mu, double sigma)
     return exp(-0.5 * a * a);
 }
 
-SB3_DEV_kernel_t* SB3_DEV_gaussian_kernel(int kernel_radius)
+SB3_DEV_kernel_t* SB3_DEV_gaussian_kernel(unsigned int kernel_radius)
 {
     double sigma = kernel_radius / 2.;
     int size = 2 * kernel_radius + 1;
@@ -205,6 +211,49 @@ SB3_DEV_kernel_t* SB3_DEV_gaussian_kernel(int kernel_radius)
     };
 
     return res;
+}
+
+SB3_DEV_image_t* SB3_DEV_gaussian_blur(SB3_DEV_image_t* image, unsigned int kernel_radius)
+{
+    SB3_DEV_kernel_t* kernel = SB3_DEV_gaussian_kernel(kernel_radius);
+    SB3_DEV_image_t* res = SB3_DEV_NewImage(image->w, image->h, image->format);
+    int* c = SB3_DEV_convolution(image, kernel);
+    char is_rgb = image->format == SB3_DEV_RGB_FORMAT;
+    for(int i = 0; i < image->w * image->h; i++)
+    {
+        if(is_rgb)
+        {
+            SB3_DEV_RGBColor_t* color = SB3_DEV_NewRGB(c[i*3]%256, c[i*3+1]%256, c[i*3+2]%256);
+            SB3_DEV_SetPixel(res, (void*)color, i);
+        }
+        else SB3_DEV_SetPixel(res, (void*)SB3_DEV_NewMonoColor(c[i]%256), i);
+    }
+    free(c);
+    SB3_DEV_FreeKernel(kernel);
+    return res;
+}
+
+void SB3_DEV_apply_gaussian_blur(SB3_DEV_image_t* image, unsigned int kernel_radius)
+{
+    // BASICALLY :
+    // SB3_DEV_image_t* res = SB3_DEV_gaussian_blur(image, kernel_radius);
+    // for(int i=0;i<image->w*image->h;i++)
+    //     SB3_DEV_SetPixel(image, SB3_DEV_GetPixel(res, i), i);
+    // SB3_DEV_FreeImage(res);
+    SB3_DEV_kernel_t* kernel = SB3_DEV_gaussian_kernel(kernel_radius);
+    int* c = SB3_DEV_convolution(image, kernel);
+    char is_rgb = image->format == SB3_DEV_RGB_FORMAT;
+    for(int i = 0; i < image->w * image->h; i++)
+    {
+        if(is_rgb)
+        {
+            SB3_DEV_RGBColor_t* color = SB3_DEV_NewRGB(c[i*3]%256, c[i*3+1]%256, c[i*3+2]%256);
+            SB3_DEV_SetPixel(image, (void*)color, i);
+        }
+        else SB3_DEV_SetPixel(image, (void*)SB3_DEV_NewMonoColor(c[i]%256), i);
+    }
+    free(c);
+    SB3_DEV_FreeKernel(kernel);
 }
 
 

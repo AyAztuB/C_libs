@@ -4,7 +4,7 @@ HDR = sb3_dev.h
 SRC = $(wildcard sb3_dev*.c)
 OBJ = $(SRC:.c=.o)
 CC = gcc
-CFLAGS = -DSB3_CRASH_WHEN_ERROR -Wall -Wextra -Werror -fPIC -lm
+CFLAGS = -g -Wall -Wextra -Werror -fPIC -lm -fsanitize=address
 
 all: install
 
@@ -15,7 +15,7 @@ static: $(OBJ)
 	ar -rcs $(STATIC) $(OBJ)
 
 test: static
-	gcc main.c -L. -lsb3_dev
+	gcc -g main.c -L. -lsb3_dev -lm -fsanitize=address
 
 install: dynamic
 	cp $(DYNAMIC) /usr/lib/
