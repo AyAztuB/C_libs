@@ -52,7 +52,7 @@ int* SB3_DEV_convolution(SB3_DEV_image_t* image, SB3_DEV_kernel_t* kernel)
     {
         for(int j = 0; j < image->w; j++)
         {
-            int nr = 0, ng = 0, nb = 0;
+            double nr = 0, ng = 0, nb = 0;
 
             for(int n = -max_coordonate; n <= max_coordonate; n++)
             {
@@ -68,28 +68,28 @@ int* SB3_DEV_convolution(SB3_DEV_image_t* image, SB3_DEV_kernel_t* kernel)
                         _w = image->w - 1;
 
                     void* color = SB3_DEV_GetPixelPos(image, _w, _h);
-                    int mult = kernel->kernel[(n + max_coordonate) *
+                    double mult = kernel->kernel[(n + max_coordonate) *
                         kernel->dim + (m + max_coordonate)];
 
                     if(is_rgb)
                     {
-                        nr += ((SB3_DEV_RGBColor_t*)color)->r * mult;
-                        ng += ((SB3_DEV_RGBColor_t*)color)->g * mult;
-                        nb += ((SB3_DEV_RGBColor_t*)color)->b * mult;
+                        nr += (double)((SB3_DEV_RGBColor_t*)color)->r * mult;
+                        ng += (double)((SB3_DEV_RGBColor_t*)color)->g * mult;
+                        nb += (double)((SB3_DEV_RGBColor_t*)color)->b * mult;
                     }
                     else
-                        nr += ((SB3_DEV_monoColor_t*)color)->color * mult;
+                        nr += (double)((SB3_DEV_monoColor_t*)color)->color * mult;
                 }
             }
 
             if(is_rgb)
             {
-                res[(i * image->w + j) * 3] = nr;
-                res[(i * image->w + j) * 3 + 1] = ng;
-                res[(i * image->w + j) * 3 + 2] = nb;
+                res[(i * image->w + j) * 3] = (int)nr;
+                res[(i * image->w + j) * 3 + 1] = (int)ng;
+                res[(i * image->w + j) * 3 + 2] = (int)nb;
             }
             else
-                res[i * image->w + j] = nr;
+                res[i * image->w + j] = (int)nr;
         }
     }
 
