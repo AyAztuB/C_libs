@@ -30,50 +30,50 @@
  */
 
 
-#ifndef __CHAIN_LIST_H__
-#define __CHAIN_LIST_H__
+#ifndef __LINKED_LIST_H__
+#define __LINKED_LIST_H__
 
 #include <stdlib.h>
 
-typedef struct CHAIN_LIST_ELEMENT_STRUCT {
+typedef struct LINKED_LIST_ELEMENT_STRUCT {
     void* element;
-    struct CHAIN_LIST_ELEMENT_STRUCT* previus;
-    struct CHAIN_LIST_ELEMENT_STRUCT* next;
-} ChainListElement;
+    struct LINKED_LIST_ELEMENT_STRUCT* previus;
+    struct LINKED_LIST_ELEMENT_STRUCT* next;
+} LinkedListElement;
 
 typedef struct{
     size_t length;
     size_t type;
-    ChainListElement* start;
-    ChainListElement* end;
-} ChainListData;
+    LinkedListElement* start;
+    LinkedListElement* end;
+} LinkedListData;
 
 typedef struct{
-    ChainListData* data;
-    ChainListElement* current_pt;
-} ChainList;
+    LinkedListData* data;
+    LinkedListElement* current_pt;
+} LinkedList;
 
-ChainList* new_chain_list(size_t type);
+LinkedList* new_linked_list(size_t type);
 
-void chain_list_add(ChainList* list, void* element);
+void linked_list_add(LinkedList* list, void* element);
 
-void* chain_list_pop(ChainList* list);
+void* linked_list_pop(LinkedList* list);
 
-void* chain_list_get_index(ChainList* list, int i);
+void* linked_list_get_index(LinkedList* list, int i);
 
-void* chain_list_increment(ChainList* list);
+void* linked_list_increment(LinkedList* list);
 
-void* chain_list_decrement(ChainList* list);
+void* linked_list_decrement(LinkedList* list);
 
-void* chain_list_get_start(ChainList* list);
+void* linked_list_get_start(LinkedList* list);
 
-void* chain_list_get_end(ChainList* list);
+void* linked_list_get_end(LinkedList* list);
 
-void free_chain_list(ChainList* list, char FreeValues);
+void free_linked_list(LinkedList* list, char FreeValues);
 
-void chain_list_insert(ChainList* list, void* element, int index);
+void linked_list_insert(LinkedList* list, void* element, int index);
 
-void* chain_list_remove(ChainList* list, int index);
+void* linked_list_remove(LinkedList* list, int index);
 
-#endif // __CHAIN_LIST_H__
+#endif // __LINKED_LIST_H__
 

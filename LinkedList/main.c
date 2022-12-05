@@ -1,23 +1,23 @@
-#include "chain_list.h"
+#include "linked_list.h"
 #include <stdio.h>
 
 int main(void){
     void* p;
     int size = sizeof(int);
-    ChainList* list;
-    list = new_chain_list(size);
+    LinkedList* list;
+    list = new_linked_list(size);
     int* array = malloc(10*sizeof(int));
     for(int i=0; i<10; i++){
         array[i] = i;
-        chain_list_add(list, (void*)&(array[i]));
+        linked_list_add(list, (void*)&(array[i]));
     }
 
     printf("{ ");
-    for(p = chain_list_get_start(list); p; p =chain_list_increment(list))
+    for(p = linked_list_get_start(list); p; p =linked_list_increment(list))
         printf("%d ", *((int*)(p)));
     printf("}\n");
 
-    free_chain_list(list, 0);
+    free_linked_list(list, 0);
     free(array);
     return 0;
 }

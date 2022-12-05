@@ -30,19 +30,19 @@
  */
 
 
-#include "chain_list.h"
+#include "linked_list.h"
 
-ChainList* new_chain_list(size_t type){
-    ChainListData* data = malloc(sizeof(ChainListData));
-    ChainList* list = malloc(sizeof(ChainList));
-    *data = (ChainListData){
+LinkedList* new_linked_list(size_t type){
+    LinkedListData* data = malloc(sizeof(LinkedListData));
+    LinkedList* list = malloc(sizeof(LinkedList));
+    *data = (LinkedListData){
         .length = 0,
         .type = type,
         .start = NULL,
         .end = NULL,
     };
 
-    *list = (ChainList){
+    *list = (LinkedList){
         .data = data,
         .current_pt = NULL,
     };
@@ -50,9 +50,9 @@ ChainList* new_chain_list(size_t type){
     return list;
 }
 
-void chain_list_add(ChainList* list, void* element){
-    ChainListElement* e = malloc(sizeof(ChainListElement));
-    *e = (ChainListElement){
+void linked_list_add(LinkedList* list, void* element){
+    LinkedListElement* e = malloc(sizeof(LinkedListElement));
+    *e = (LinkedListElement){
         .element = element,
         .previus = list->data->end,
         .next = NULL,
@@ -69,7 +69,7 @@ void chain_list_add(ChainList* list, void* element){
     }
 }
 
-void* chain_list_pop(ChainList* list){
+void* linked_list_pop(LinkedList* list){
     if(!list->data->length || !list->data->start || !list->data->end)
         return NULL;
 
@@ -91,11 +91,11 @@ void* chain_list_pop(ChainList* list){
     return res;
 }
 
-void* chain_list_get_pos_index(ChainList* list, int i){
+void* linked_list_get_pos_index(LinkedList* list, int i){
     if(i >= (int)list->data->length)
         return NULL;
 
-    ChainListElement* res = list->data->start;
+    LinkedListElement* res = list->data->start;
 
     for(int k = 0; k < i; k++)
         res = res->next;
@@ -103,11 +103,11 @@ void* chain_list_get_pos_index(ChainList* list, int i){
     return res->element;
 }
 
-void* chain_list_get_neg_index(ChainList* list, int i){
+void* linked_list_get_neg_index(LinkedList* list, int i){
     if(-i >= (int)list->data->length)
         return NULL;
 
-    ChainListElement* res = list->data->end;
+    LinkedListElement* res = list->data->end;
 
     for(int k = -1; k > i; k--)
         res = res->previus;
@@ -115,12 +115,12 @@ void* chain_list_get_neg_index(ChainList* list, int i){
     return res->element;
 }
 
-void* chain_list_get_index(ChainList* list, int i){
-    return i < 0 ? chain_list_get_neg_index(list, i) :
-        chain_list_get_pos_index(list, i);
+void* linked_list_get_index(LinkedList* list, int i){
+    return i < 0 ? linked_list_get_neg_index(list, i) :
+        linked_list_get_pos_index(list, i);
 }
 
-void* chain_list_increment(ChainList* list){
+void* linked_list_increment(LinkedList* list){
     if(!list->current_pt){
         list->current_pt = list->data->start;
         return NULL;
@@ -130,7 +130,7 @@ void* chain_list_increment(ChainList* list){
     return list->current_pt ? list-> current_pt->element : NULL;
 }
 
-void* chain_list_decrement(ChainList* list){
+void* linked_list_decrement(LinkedList* list){
     if(list->current_pt){
         list->current_pt = list->data->end;
         return NULL;
@@ -140,33 +140,33 @@ void* chain_list_decrement(ChainList* list){
     return list->current_pt ? list->current_pt->element : NULL;
 }
 
-void* chain_list_get_start(ChainList* list){
+void* linked_list_get_start(LinkedList* list){
     list->current_pt = list->data->start;
     return list->current_pt ? list->current_pt->element : NULL;
 }
 
-void* chain_list_get_end(ChainList* list){
+void* linked_list_get_end(LinkedList* list){
     list->current_pt = list->data->end;
     return list->current_pt ? list->current_pt->element : NULL;
 }
 
-void free_chain_list(ChainList* list, char FreeValues){
+void free_linked_list(LinkedList* list, char FreeValues){
     void* e;
-    while((e = chain_list_pop(list)))
+    while((e = linked_list_pop(list)))
         if(FreeValues)
             free(e);
     free(list->data);
     free(list);
 }
 
-void chain_list_insert_pos(ChainList* list, void* element, int index){
-    ChainListElement* e = list->data->start;
+void linked_list_insert_pos(LinkedList* list, void* element, int index){
+    LinkedListElement* e = list->data->start;
 
     for(int k = 0; k<index; k++)
         e = e->next;
 
-    ChainListElement* insert = malloc(sizeof(ChainListElement));
-    *insert = (ChainListElement){
+    LinkedListElement* insert = malloc(sizeof(LinkedListElement));
+    *insert = (LinkedListElement){
         .element = element,
         .previus = e->previus,
         .next = e,
@@ -176,14 +176,14 @@ void chain_list_insert_pos(ChainList* list, void* element, int index){
     insert->next->previus = insert;
 }
 
-void chain_list_insert_neg(ChainList* list, void* element, int index){
-    ChainListElement* e = list->data->end;
+void linked_list_insert_neg(LinkedList* list, void* element, int index){
+    LinkedListElement* e = list->data->end;
 
     for(int k = -1; k>index; k--)
         e = e->previus;
 
-    ChainListElement* insert = malloc(sizeof(ChainListElement));
-    *insert = (ChainListElement){
+    LinkedListElement* insert = malloc(sizeof(LinkedListElement));
+    *insert = (LinkedListElement){
         .element = element,
         .previus = e,
         .next = e->next,
@@ -193,10 +193,10 @@ void chain_list_insert_neg(ChainList* list, void* element, int index){
     insert->previus->next = insert;
 }
 
-void chain_list_insert_start(ChainList* list, void* element){
-    ChainListElement* e = malloc(sizeof(ChainListElement));
+void linked_list_insert_start(LinkedList* list, void* element){
+    LinkedListElement* e = malloc(sizeof(LinkedListElement));
 
-    *e = (ChainListElement){
+    *e = (LinkedListElement){
         .element = element,
         .previus = NULL,
         .next = list->data->start,
@@ -207,22 +207,22 @@ void chain_list_insert_start(ChainList* list, void* element){
     list->data->start = e;
 }
 
-void chain_list_insert(ChainList* list, void* element, int index){
+void linked_list_insert(LinkedList* list, void* element, int index){
     if(index >= (int)list->data->length || index == -1 || !list->data->length)
-        chain_list_add(list, element);
+        linked_list_add(list, element);
     else if(index == 0 || -index >= (int)list->data->length)
-        chain_list_insert_start(list, element);
+        linked_list_insert_start(list, element);
     else{
         if(index >= 0)
-            chain_list_insert_pos(list, element, index);
+            linked_list_insert_pos(list, element, index);
         else
-            chain_list_insert_neg(list, element, index);
+            linked_list_insert_neg(list, element, index);
         list->data->length += 1;
     }
 }
 
-ChainListElement* chain_list_remove_pos(ChainList* list, int index){
-    ChainListElement* e = list->data->start;
+LinkedListElement* linked_list_remove_pos(LinkedList* list, int index){
+    LinkedListElement* e = list->data->start;
 
     for(int k=0; k<index; k++)
         e = e->next;
@@ -230,8 +230,8 @@ ChainListElement* chain_list_remove_pos(ChainList* list, int index){
     return e;
 }
 
-ChainListElement* chain_list_remove_neg(ChainList* list, int index){
-    ChainListElement* e = list->data->end;
+LinkedListElement* linked_list_remove_neg(LinkedList* list, int index){
+    LinkedListElement* e = list->data->end;
 
     for(int k =-1; k>index; k--)
         e = e->previus;
@@ -239,8 +239,8 @@ ChainListElement* chain_list_remove_neg(ChainList* list, int index){
     return e;
 }
 
-void* chain_list_remove_start(ChainList* list){
-    ChainListElement* res = list->data->start;
+void* linked_list_remove_start(LinkedList* list){
+    LinkedListElement* res = list->data->start;
     list->data->start = res->next;
     list->data->start->previus = NULL;
     list->data->length -=1;
@@ -249,19 +249,19 @@ void* chain_list_remove_start(ChainList* list){
     return e;
 }
 
-void* chain_list_remove(ChainList* list, int index){
+void* linked_list_remove(LinkedList* list, int index){
     if(!list->data->length)
         return NULL;
     if(list->data->length == 1 || index >= (int)list->data->length || index == -1)
-        return chain_list_pop(list);
+        return linked_list_pop(list);
     if(index == 0 || -index >= (int)list->data->length)
-        return chain_list_remove_start(list);
-    ChainListElement* e;
+        return linked_list_remove_start(list);
+    LinkedListElement* e;
 
     if(index >= 0)
-        e = chain_list_remove_pos(list, index);
+        e = linked_list_remove_pos(list, index);
     else
-        e = chain_list_remove_neg(list, index);
+        e = linked_list_remove_neg(list, index);
 
     void* res = e->element;
 
