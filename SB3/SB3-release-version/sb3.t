@@ -1,4 +1,4 @@
-.TH sb3 3 "november 16, 2022" "version 1.10" "SB3 lib man page"
+.TH sb3 3 "november 16, 2022" "version 1.20" "SB3 lib man page"
 
 .SH NAME
 sb3 \- SB3, image library (SDL BUT BETTER BITMAP)

@@ -36,8 +36,7 @@
 #include <stdlib.h>
 #include <stdint.h>
 
-#define SB3_DEV_VERSION "2.00"
-#define SB3_DEV_CRASH_WHEN_ERROR
+#define SB3_DEV_VERSION "2.20"
 
 // ENUMS
 

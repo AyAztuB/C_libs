@@ -10,6 +10,7 @@ int main(void)
     SB3_DEV_FreeImage(img);
     SB3_DEV_BMP_write_image("copy.bmp", copy);
     SB3_DEV_FreeImage(copy);
+    SB3_DEV_image_t* crash = SB3_DEV_BMP_read_image("crash.bmp", SB3_DEV_RGB_FORMAT);
     return 0;
 }
 

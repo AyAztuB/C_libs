@@ -108,8 +108,8 @@ SB3_errors_t SB3_BMP_write_image(const char* path, SB3_image_t* image)
     
     const int file_header_size = 14;
     const int info_header_size = 40;
-    const int file_size = file_header_size + info_header_size + color_table_size + image->h * image->w * ((double)bits_per_pixels / 8.) + padding * image->h;
-    const int pixel_array_offset = file_header_size + info_header_size + color_table_size;
+    const int file_size = file_header_size + info_header_size + color_table_size * 4 + image->h * image->w * ((double)bits_per_pixels / 8.) + padding * image->h;
+    const int pixel_array_offset = file_header_size + info_header_size + color_table_size * 4;
     
     // FILE HEADER
     uint8_t file_header[file_header_size];
