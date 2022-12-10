@@ -86,7 +86,7 @@ sudo make uninstall
 #include <ayaztub/LIBRARY.h>
 ```
 with `LIBRARY` the name of it (for exemple: `#include <ayaztub/data_structures.h>`
-or `#include <ayaztub/data_structures/linked_list.h`)
+or `#include <ayaztub/data_structures/linked_list.h>`)
 To compile your program with it, don't forgot to link with the library:
 ```
 gcc main.c -layaztub
@@ -130,7 +130,7 @@ man ayaztub.data_structures
 man ./DataStructures/data_structures.t
 ```
 **Content**
-*Linked list
+* Linked list
 
 ## Contact me
 
