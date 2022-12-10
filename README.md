@@ -9,16 +9,19 @@ This is a collection of tools for the C programming.
 
 ## Compile in static or dynamic library
 
-You can use the global Makefile or a subdirectory Makefile
+You can use the global Makefile or a subdirectory Makefile.
+The global Makefile allow you to compile all the libraries of a sub-cathegory
+(like the DataStructures one). To install a specific library, you need to use
+the Makefile in it.
 From the global one, just do (with `<LIBRARY>` the library to compile and
 `<METHODE>` the static or dynamic methode)
 ```
 make <LIBRARY>_<METHODE>
 ```
-For example, the LinkedList library is compiled as follow:
+For example, the DataStructures library is compiled as follow:
 ```
-make linked_list_static
-make linked_list_dynamic
+make data_structures_static
+make data_structures_dynamic
 ```
 By using the subdirectory Makefile, you just need to precise the methode:
 ```
@@ -30,14 +33,9 @@ following command.
 ```
 make test
 ```
-If you are in a subdirectory, you can clean all compile files with
+To clean all the compilation, just do
 ```
 make clean
-```
-At the repository root, this command will only remove .o files but compiled
-libraries will be still here. If you want to clean all of this, you need to use
-```
-make clean_all
 ```
 
 ## Install
@@ -49,14 +47,21 @@ By default, the library will be installed at `/usr/lib/`, the header at
 If your systems path aren't the aboves, you can change it at the begining of the
 main Makefile
 
-To install the libraries, just do
+From a sub-directory, you can install the current library by using one of the
+above.
+```
+sudo make
+sudo make install
+```
+
+To install the libraries from the general Makefile, do
 ```
 sudo make <LIBRARY>_install
 ```
-with `<LIBRARY>` the library to install. For exemple, with the LinkedList
+with `<LIBRARY>` the library to install. For exemple, with the DataStructures
 library, it's as follow
 ```
-sudo make linked_list_install
+sudo make data_structures_install
 ```
 If you want to install all of the libraries, you can do
 ```
@@ -77,14 +82,18 @@ sudo make uninstall
 ### Installed Library
 
 ```
-#include <LIBRARY.h>
+#include <ayaztub.h>
+#include <ayaztub/LIBRARY.h>
 ```
-with `LIBRARY` the name of it (for exemple: `#include <linked_list.h>`)
+with `LIBRARY` the name of it (for exemple: `#include <ayaztub/data_structures.h>`
+or `#include <ayaztub/data_structures/linked_list.h`)
 To compile your program with it, don't forgot to link with the library:
 ```
-gcc main.c -lLIBRARY
+gcc main.c -layaztub
+gcc main.c -layaztub_LIBRARY
 ```
-(for exemple `gcc main.c -llinked_list`)
+(for exemple `gcc main.c -layaztub_data_structures` or `gcc main.c
+-layaztub_data_structures_linked_list`)
 
 ### Static library
 
@@ -99,18 +108,29 @@ You also can compile your program like `gcc main.c libLIBRARY.a` (for exemple:
 ## Content
 
 For specific documentation, please refer to the README in the subdirectory or
-use the given man page (if not installed: `man ./LinkedList/linked_list.t`)
+use the given man page (if not installed: `man ./ayaztub.t`)
 
-### Linked List
+### Data structures
 
 **Include**
 ```
-#include <linked_list.h>
+#include <ayaztub/data_structures.h>
 ```
 **Library name**
 ```
-liblinked_list
+libayaztub_data_structures
 ```
+**Compilation**
+```
+gcc main.c -layaztub_data_structures
+```
+**MAN page**
+```
+man ayaztub.data_structures
+man ./DataStructures/data_structures.t
+```
+**Content**
+*Linked list
 
 ## Contact me
 

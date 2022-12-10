@@ -2,11 +2,11 @@
 
 ## SYNOPSIS
 
-`#include <linked_list.h>`
+`#include <ayaztub/data_structures/linked_list.h>`
 
 content : a complete implementation of linked lists with generals types
 
-call `man linked_list` for informations about availables functions
+call `man ayaztub.data_structures.linked_list` for informations about availables functions
 
 ## DESCRIPTION
 

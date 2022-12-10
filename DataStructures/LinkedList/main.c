@@ -1,4 +1,4 @@
-#include "linked_list.h"
+#include <ayaztub/data_structures/linked_list.h>
 #include <stdio.h>
 
 int main(void){

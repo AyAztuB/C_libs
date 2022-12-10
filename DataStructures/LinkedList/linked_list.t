@@ -1,10 +1,24 @@
-.TH linked_list 3 "december 05, 2022" "version 1.1" "linked_list lib man page"
+.TH linked_list 3 "december 10, 2022" "version 1.1" "AyAztuB C library doc : linked_list"
 
 .SH NAME
-linked_list \- linked list library functions
+linked_list \- linked list c library
 
 .SH SYNOPSIS
-.B #include <linked_list.h>
+
+.B #include <ayaztub.h>
+.RS
+gcc my_program.c \fI\-layaztub\fR
+.RE
+.PP
+.B #include <ayaztub/data_structures.h>
+.RS
+gcc my_program.c \fI\-layaztub_data_structures\fR
+.RE
+.PP
+.B #include <ayaztub/data_structures/linked_list.h>
+.RS
+gcc my_program.c \fI\-layaztub_data_structures_linked_list\fR
+.RE
 
 .SH DESCRIPTION
 The linked list library provides a simple implementation of linked list in C.
@@ -77,7 +91,11 @@ remove LinkedListElement at index \fIindex\fR in \fIlist\fR and return its conte
 
 .RE
 
+.SH SEE ALSO
+
+\fBayaztub\fR(3), \fBayaztub.data_structures\fR(3)
+
 .SH AUTHOR
-created by \fBAyAztuB\fR (\fIayaztub@gmail.com\fR) from \fIhttps://github.com/AyAztuB/C_libs/tree/main/LinkedList\fR
+created by \fBAyAztuB\fR (\fIayaztub@gmail.com\fR) from \fIhttps://github.com/AyAztuB/C_libs\fR
 
 
