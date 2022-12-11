@@ -1,10 +1,10 @@
-#include <ayaztub/data_structures/linked_list.h>
+#include "linked_list.h"
 #include <stdio.h>
 
 int main(void){
     void* p;
     int size = sizeof(int);
-    LinkedList* list;
+    linked_list_t* list;
     list = new_linked_list(size);
     int* array = malloc(10*sizeof(int));
     for(int i=0; i<10; i++){

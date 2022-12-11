@@ -32,70 +32,66 @@
 
 #include "linked_list.h"
 
-LinkedList* new_linked_list(size_t type){
-    LinkedListData* data = malloc(sizeof(LinkedListData));
-    LinkedList* list = malloc(sizeof(LinkedList));
-    *data = (LinkedListData){
+linked_list_t* new_linked_list(size_t type){
+    linked_list_t* list = malloc(sizeof(linked_list_t));
+
+    *list = (linked_list_t){
         .length = 0,
         .type = type,
         .start = NULL,
         .end = NULL,
-    };
-
-    *list = (LinkedList){
-        .data = data,
         .current_pt = NULL,
     };
 
     return list;
 }
 
-void linked_list_add(LinkedList* list, void* element){
-    LinkedListElement* e = malloc(sizeof(LinkedListElement));
-    *e = (LinkedListElement){
+void linked_list_add(linked_list_t* list, void* element){
+    linked_list_element_t* e = malloc(sizeof(linked_list_element_t));
+    *e = (linked_list_element_t){
         .element = element,
-        .previus = list->data->end,
+        .previus = list->end,
         .next = NULL,
     };
-    if(list->data->end)
-        list->data->end->next = e;
+    if(list->end)
+        list->end->next = e;
 
-    list->data->end = e;
-    list->data->length += 1;
+    list->end = e;
+    list->length += 1;
 
-    if(!list->data->length || !list->data->start){
-        list->data->start = e;
+    if(!list->length || !list->start){
+        list->start = e;
         list->current_pt = e;
     }
 }
 
-void* linked_list_pop(LinkedList* list){
-    if(!list->data->length || !list->data->start || !list->data->end)
+void* linked_list_pop(linked_list_t* list){
+    if(!list->length || !list->start || !list->end)
         return NULL;
 
-    void* res = list->data->end->element;
-    list->data->length -= 1;
+    void* res = list->end->element;
+    list->length -= 1;
 
-    if(!list->data->end->previus){
-        free(list->data->end);
+    if(!list->end->previus){
+        free(list->end);
         list->current_pt = NULL;
-        list->data->start = NULL;
-        list->data->end = NULL;
+        list->start = NULL;
+        list->end = NULL;
     }
     else{
-        list->data->end = list->data->end->previus;
-        free(list->data->end->next);
-        list->data->end->next = NULL;
+        list->end = list->end->previus;
+        free(list->end->next);
+        list->end->next = NULL;
     }
 
     return res;
 }
 
-void* linked_list_get_pos_index(LinkedList* list, int i){
-    if(i >= (int)list->data->length)
+void* linked_list_get_pos_index(linked_list_t* list, int i){
+    if(i >= (int)list->length)
         return NULL;
 
-    LinkedListElement* res = list->data->start;
+    linked_list_element_t* res = list->start;
 
     for(int k = 0; k < i; k++)
         res = res->next;
@@ -103,11 +99,11 @@ void* linked_list_get_pos_index(LinkedList* list, int i){
     return res->element;
 }
 
-void* linked_list_get_neg_index(LinkedList* list, int i){
-    if(-i >= (int)list->data->length)
+void* linked_list_get_neg_index(linked_list_t* list, int i){
+    if(-i >= (int)list->length)
         return NULL;
 
-    LinkedListElement* res = list->data->end;
+    linked_list_element_t* res = list->end;
 
     for(int k = -1; k > i; k--)
         res = res->previus;
@@ -115,14 +111,14 @@ void* linked_list_get_neg_index(LinkedList* list, int i){
     return res->element;
 }
 
-void* linked_list_get_index(LinkedList* list, int i){
+void* linked_list_get_index(linked_list_t* list, int i){
     return i < 0 ? linked_list_get_neg_index(list, i) :
         linked_list_get_pos_index(list, i);
 }
 
-void* linked_list_increment(LinkedList* list){
+void* linked_list_increment(linked_list_t* list){
     if(!list->current_pt){
-        list->current_pt = list->data->start;
+        list->current_pt = list->start;
         return NULL;
     }
 
@@ -130,9 +126,9 @@ void* linked_list_increment(LinkedList* list){
     return list->current_pt ? list-> current_pt->element : NULL;
 }
 
-void* linked_list_decrement(LinkedList* list){
+void* linked_list_decrement(linked_list_t* list){
     if(list->current_pt){
-        list->current_pt = list->data->end;
+        list->current_pt = list->end;
         return NULL;
     }
 
@@ -140,33 +136,32 @@ void* linked_list_decrement(LinkedList* list){
     return list->current_pt ? list->current_pt->element : NULL;
 }
 
-void* linked_list_get_start(LinkedList* list){
-    list->current_pt = list->data->start;
+void* linked_list_get_start(linked_list_t* list){
+    list->current_pt = list->start;
     return list->current_pt ? list->current_pt->element : NULL;
 }
 
-void* linked_list_get_end(LinkedList* list){
-    list->current_pt = list->data->end;
+void* linked_list_get_end(linked_list_t* list){
+    list->current_pt = list->end;
     return list->current_pt ? list->current_pt->element : NULL;
 }
 
-void free_linked_list(LinkedList* list, char FreeValues){
+void free_linked_list(linked_list_t* list, char FreeValues){
     void* e;
     while((e = linked_list_pop(list)))
         if(FreeValues)
             free(e);
-    free(list->data);
     free(list);
 }
 
-void linked_list_insert_pos(LinkedList* list, void* element, int index){
-    LinkedListElement* e = list->data->start;
+void linked_list_insert_pos(linked_list_t* list, void* element, int index){
+    linked_list_element_t* e = list->start;
 
     for(int k = 0; k<index; k++)
         e = e->next;
 
-    LinkedListElement* insert = malloc(sizeof(LinkedListElement));
-    *insert = (LinkedListElement){
+    linked_list_element_t* insert = malloc(sizeof(linked_list_element_t));
+    *insert = (linked_list_element_t){
         .element = element,
         .previus = e->previus,
         .next = e,
@@ -176,14 +171,14 @@ void linked_list_insert_pos(LinkedList* list, void* element, int index){
     insert->next->previus = insert;
 }
 
-void linked_list_insert_neg(LinkedList* list, void* element, int index){
-    LinkedListElement* e = list->data->end;
+void linked_list_insert_neg(linked_list_t* list, void* element, int index){
+    linked_list_element_t* e = list->end;
 
     for(int k = -1; k>index; k--)
         e = e->previus;
 
-    LinkedListElement* insert = malloc(sizeof(LinkedListElement));
-    *insert = (LinkedListElement){
+    linked_list_element_t* insert = malloc(sizeof(linked_list_element_t));
+    *insert = (linked_list_element_t){
         .element = element,
         .previus = e,
         .next = e->next,
@@ -193,36 +188,36 @@ void linked_list_insert_neg(LinkedList* list, void* element, int index){
     insert->previus->next = insert;
 }
 
-void linked_list_insert_start(LinkedList* list, void* element){
-    LinkedListElement* e = malloc(sizeof(LinkedListElement));
+void linked_list_insert_start(linked_list_t* list, void* element){
+    linked_list_element_t* e = malloc(sizeof(linked_list_element_t));
 
-    *e = (LinkedListElement){
+    *e = (linked_list_element_t){
         .element = element,
         .previus = NULL,
-        .next = list->data->start,
+        .next = list->start,
     };
 
-    list->data->start->previus = e;
-    list->data->length += 1;
-    list->data->start = e;
+    list->start->previus = e;
+    list->length += 1;
+    list->start = e;
 }
 
-void linked_list_insert(LinkedList* list, void* element, int index){
-    if(index >= (int)list->data->length || index == -1 || !list->data->length)
+void linked_list_insert(linked_list_t* list, void* element, int index){
+    if(index >= (int)list->length || index == -1 || !list->length)
         linked_list_add(list, element);
-    else if(index == 0 || -index >= (int)list->data->length)
+    else if(index == 0 || -index >= (int)list->length)
         linked_list_insert_start(list, element);
     else{
         if(index >= 0)
             linked_list_insert_pos(list, element, index);
         else
             linked_list_insert_neg(list, element, index);
-        list->data->length += 1;
+        list->length += 1;
     }
 }
 
-LinkedListElement* linked_list_remove_pos(LinkedList* list, int index){
-    LinkedListElement* e = list->data->start;
+linked_list_element_t* linked_list_remove_pos(linked_list_t* list, int index){
+    linked_list_element_t* e = list->start;
 
     for(int k=0; k<index; k++)
         e = e->next;
@@ -230,8 +225,8 @@ LinkedListElement* linked_list_remove_pos(LinkedList* list, int index){
     return e;
 }
 
-LinkedListElement* linked_list_remove_neg(LinkedList* list, int index){
-    LinkedListElement* e = list->data->end;
+linked_list_element_t* linked_list_remove_neg(linked_list_t* list, int index){
+    linked_list_element_t* e = list->end;
 
     for(int k =-1; k>index; k--)
         e = e->previus;
@@ -239,24 +234,24 @@ LinkedListElement* linked_list_remove_neg(LinkedList* list, int index){
     return e;
 }
 
-void* linked_list_remove_start(LinkedList* list){
-    LinkedListElement* res = list->data->start;
-    list->data->start = res->next;
-    list->data->start->previus = NULL;
-    list->data->length -=1;
+void* linked_list_remove_start(linked_list_t* list){
+    linked_list_element_t* res = list->start;
+    list->start = res->next;
+    list->start->previus = NULL;
+    list->length -=1;
     void* e = res->element;
     free(res);
     return e;
 }
 
-void* linked_list_remove(LinkedList* list, int index){
-    if(!list->data->length)
+void* linked_list_remove(linked_list_t* list, int index){
+    if(!list->length)
         return NULL;
-    if(list->data->length == 1 || index >= (int)list->data->length || index == -1)
+    if(list->length == 1 || index >= (int)list->length || index == -1)
         return linked_list_pop(list);
-    if(index == 0 || -index >= (int)list->data->length)
+    if(index == 0 || -index >= (int)list->length)
         return linked_list_remove_start(list);
-    LinkedListElement* e;
+    linked_list_element_t* e;
 
     if(index >= 0)
         e = linked_list_remove_pos(list, index);
@@ -265,7 +260,7 @@ void* linked_list_remove(LinkedList* list, int index){
 
     void* res = e->element;
 
-    list->data->length -=1;
+    list->length -=1;
     e->next->previus = e->previus;
     e->previus->next = e->next;
 
