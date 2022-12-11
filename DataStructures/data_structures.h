@@ -44,41 +44,37 @@ typedef struct LINKED_LIST_ELEMENT_STRUCT {
     void* element;
     struct LINKED_LIST_ELEMENT_STRUCT* previus;
     struct LINKED_LIST_ELEMENT_STRUCT* next;
-} LinkedListElement;
+} linked_list_element_t;
 
 typedef struct{
     size_t length;
     size_t type;
-    LinkedListElement* start;
-    LinkedListElement* end;
-} LinkedListData;
+    linked_list_element_t* start;
+    linked_list_element_t* end;
+    linked_list_element_t* current_pt;
+} linked_list_t;
 
-typedef struct{
-    LinkedListData* data;
-    LinkedListElement* current_pt;
-} LinkedList;
+linked_list_t* new_linked_list(size_t type);
 
-LinkedList* new_linked_list(size_t type);
+void linked_list_add(linked_list_t* list, void* element);
 
-void linked_list_add(LinkedList* list, void* element);
+void* linked_list_pop(linked_list_t* list);
 
-void* linked_list_pop(LinkedList* list);
+void* linked_list_get_index(linked_list_t* list, int i);
 
-void* linked_list_get_index(LinkedList* list, int i);
+void* linked_list_increment(linked_list_t* list);
 
-void* linked_list_increment(LinkedList* list);
+void* linked_list_decrement(linked_list_t* list);
 
-void* linked_list_decrement(LinkedList* list);
+void* linked_list_get_start(linked_list_t* list);
 
-void* linked_list_get_start(LinkedList* list);
+void* linked_list_get_end(linked_list_t* list);
 
-void* linked_list_get_end(LinkedList* list);
+void free_linked_list(linked_list_t* list, char FreeValues);
 
-void free_linked_list(LinkedList* list, char FreeValues);
+void linked_list_insert(linked_list_t* list, void* element, int index);
 
-void linked_list_insert(LinkedList* list, void* element, int index);
-
-void* linked_list_remove(LinkedList* list, int index);
+void* linked_list_remove(linked_list_t* list, int index);
 
 #endif // __LINKED_LIST_H__
 
