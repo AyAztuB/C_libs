@@ -35,13 +35,23 @@
 
 #include <stdlib.h>
 
-#define Vect(type_t) type_t*
+#define Vect(T) T*
 
 typedef struct {
     size_t capacity;
     size_t length;
     size_t element_size;
 } vect_data_t;
+
+#define Vect_init(T, capacity) \
+({ \
+    vect_data_t* res = malloc(sizeof(vect_data_t) + capacity * sizeof(T)); \
+    res->capacity = capacity; \
+    res->length = 0; \
+    res->element_size = sizeof(T); \
+    /* RETURN */ \
+    (Vect(T)) ((void*)res+sizeof(vect_data_t)); \
+})
 
 #define Vect_new(T) \
 ({ \
@@ -66,7 +76,7 @@ typedef struct {
     data->length = 0; \
 })
 
-#define Vect_add(vect, T, element) \
+#define Vect_push(vect, T, element) \
 ({ \
     vect_data_t* data = (void*)vect - sizeof(vect_data_t); \
     if(data->length == data->capacity) { \

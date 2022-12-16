@@ -6,7 +6,7 @@ int main(void)
 {
     Vect(int) v = Vect_new(int);
     for(int i = 0; i < 10; i++)
-        v = Vect_add(v, int, i);
+        v = Vect_push(v, int, i);
     printf("length v = %lu\n", Vect_length(v));
     printf("v = {");
     for(int i = 0; i < (int)Vect_length(v); i++)

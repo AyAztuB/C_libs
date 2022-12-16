@@ -78,4 +78,82 @@ void* linked_list_remove(linked_list_t* list, int index);
 
 #endif // __LINKED_LIST_H__
 
+// ------------------- VECT -------------------
+
+#ifndef __VECT_H__
+#define __VECT_H__
+
+#include <stdlib.h>
+
+#define Vect(T) T*
+
+typedef struct {
+    size_t capacity;
+    size_t length;
+    size_t element_size;
+} vect_data_t;
+
+#define Vect_init(T, capacity) \
+({ \
+    vect_data_t* res = malloc(sizeof(vect_data_t) + capacity * sizeof(T)); \
+    res->capacity = capacity; \
+    res->length = 0; \
+    res->element_size = sizeof(T); \
+    /* RETURN */ \
+    (Vect(T)) ((void*)res+sizeof(vect_data_t)); \
+})
+
+#define Vect_new(T) \
+({ \
+    vect_data_t* res = malloc(sizeof(vect_data_t) + 4 * sizeof(T)); \
+    res->capacity = 4; \
+    res->length = 0; \
+    res->element_size = sizeof(T); \
+    /* RETURN */ \
+    (Vect(T)) ((void*)res+sizeof(vect_data_t)); \
+})
+
+#define Vect_free(vect) \
+({ \
+    free((void*)vect - sizeof(vect_data_t)); \
+})
+
+#define Vect_free_content(vect) \
+({ \
+    vect_data_t* data = (vect_data_t*)((void*)vect - sizeof(vect_data_t)); \
+    for(int i = 0; i < data->length; i++) \
+        free(vect[i]); \
+    data->length = 0; \
+})
+
+#define Vect_push(vect, T, element) \
+({ \
+    vect_data_t* data = (void*)vect - sizeof(vect_data_t); \
+    if(data->length == data->capacity) { \
+        data = (vect_data_t*)realloc((void*)data, sizeof(vect_data_t) + 2*data->capacity*data->element_size); \
+        data->capacity *= 2; \
+    } \
+    vect = (Vect(T)) ((void*)data + sizeof(vect_data_t)); \
+    *(vect + data->length) = element; \
+    data->length++; \
+    /* RETURN */ \
+    vect; \
+})
+
+#define Vect_pop(vect) \
+({ \
+    vect_data_t* data = (void*)vect - sizeof(vect_data_t); \
+    data->length--; \
+    /* RETURN */ \
+    vect[data->length]; \
+})
+
+#define Vect_length(vect) \
+({ \
+    /* RETURN */ \
+    ((vect_data_t*)((void*)vect - sizeof(vect_data_t)))->length; \
+})
+
+#endif // __VECT_H__
+
 #endif // __DATA_STRUCTURES_H__

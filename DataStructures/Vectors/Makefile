@@ -14,7 +14,7 @@ install:
 	cp vect.t $(MAN3_PATH)ayaztub.data_structures.vect.3
 	gzip $(MAN3_PATH)ayaztub.data_structures.vect.3
 
-test: static
+test:
 	gcc main.c
 
 ############### clean & uninstall ##############

@@ -25,9 +25,13 @@ All of the libraries in it are data struvtures.
 \fBlinked_list\fR
 An implementation of linked list (\fBayaztub.data_structures.linked_list\fR(3))
 
+.TP
+\fBvect\fR
+An implementation of vectors / stacks (\fBayaztub.data_structures.vect\fR(3))
+
 .SH SEE ALSO
 
-\fBayaztub\fR(3), \fBayaztub.data_structures.linked_list\fR(3)
+\fBayaztub\fR(3), \fBayaztub.data_structures.linked_list\fR(3), \fBayaztub.data_structures.vect\fR(3)
 
 .SH AUTHOR
 created by \fBAyAztuB\fR (\fIayaztub@gmail.com\fR) from \fIhttps://github.com/AyAztuB/C_libs\fR

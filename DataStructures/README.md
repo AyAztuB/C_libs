@@ -34,3 +34,15 @@ man ayaztub.data_structures.linked_list
 man ./LinkedList/linked_list.t
 ```
 
+### Vectors
+
+**Include**
+```
+#include <ayaztub/data_structures/vect.h>
+```
+**MAN page**
+```
+man ayaztub.data_structures.vect
+man ./Vectors/vect.t
+```
+

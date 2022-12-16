@@ -131,6 +131,7 @@ man ./DataStructures/data_structures.t
 ```
 **Content**
 * Linked list
+* Vectors (who can also be a Stack)
 
 ## Contact me
 

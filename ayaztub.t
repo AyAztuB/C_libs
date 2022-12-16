@@ -23,11 +23,14 @@ This is a module of futher c libraries.
 .IP linked_list
 (\fBayaztub.data_structures.linked_list\fR(3))
 
+.IP vect
+(\fBayaztub.data_structures.vect\fR(3))
+
 .RE
 
 .SH SEE ALSO
 
-\fBayaztub.data_structures\fR(3), \fBayaztub.data_structures.linked_list\fR(3)
+\fBayaztub.data_structures\fR(3), \fBayaztub.data_structures.linked_list\fR(3), \fBayaztub.data_structures.vect\fR(3)
 
 .SH AUTHOR
 created by \fBAyAztuB\fR (\fIayaztub@gmail.com\fR) from \fIhttps://github.com/AyAztuB/C_libs\fR
