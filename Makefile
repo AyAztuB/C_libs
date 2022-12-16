@@ -33,7 +33,7 @@ data_structures_static: data_structures_obj
 data_structures_dynamic: data_structures_obj
 	gcc -shared -o libdata_structures.so linked_list.o
 
-data_structures_install: linked_list_install data_structures_dynamic
+data_structures_install: linked_list_install vect_install data_structures_dynamic
 	cp libdata_structures.so $(LIB_PATH)libayaztub_data_structures.so
 	cp DataStructures/data_structures.h $(INCLUDE_PATH)ayaztub/
 	cp DataStructures/data_structures.t $(MAN3_PATH)ayaztub.data_structures.3
@@ -56,6 +56,14 @@ linked_list_install: linked_list_dynamic
 	cp DataStructures/LinkedList/linked_list.h $(INCLUDE_PATH)ayaztub/data_structures/
 	cp DataStructures/LinkedList/linked_list.t $(MAN3_PATH)ayaztub.data_structures.linked_list.3
 	gzip $(MAN3_PATH)ayaztub.data_structures.linked_list.3
+
+####    Vector ####
+
+vect_install:
+	mkdir -p $(INCLUDE_PATH)ayaztub/data_structures/
+	cp DataStructures/Vectors/vect.h $(INCLUDE_PATH)ayaztub/data_structures/
+	cp DataStructures/Vectors/vect.t $(MAN3_PATH)ayaztub.data_structures.vect.3
+	gzip $(MAN3_PATH)ayaztub.data_structures.vect.3
 
 ##################### clean #####################
 
