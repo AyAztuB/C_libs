@@ -14,6 +14,15 @@ man ayaztub.data_structures
 
 ## Content
 
+### Lambda function
+
+The header file also contains a macro to define lambda function:
+`lambda(return_type, args, body)`
+It can be used like in the following exemple:
+```
+int (*lambda_fct) (int) = lambda(int, (int e), { printf("%d\n", e); return e; });
+```
+
 ### Linked List
 
 **Include**

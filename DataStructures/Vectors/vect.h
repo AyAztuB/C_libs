@@ -30,10 +30,23 @@
  */
 
 
+#ifndef __LAMBDA_H__
+#define __LAMBDA_H__
+
+#define lambda(lambda$_ret, lambda$_args, lambda$_body) \
+({ \
+    lambda$_ret lambda$__anon$ lambda$_args \
+        lambda$_body \
+    &lambda$__anon$; \
+})
+
+#endif // __LAMBDA_H__
+
 #ifndef __VECT_H__
 #define __VECT_H__
 
 #include <stdlib.h>
+#include <stdio.h>
 
 #define Vect(T) T*
 
@@ -45,22 +58,23 @@ typedef struct {
 
 #define Vect_init(T, capacity) \
 ({ \
-    vect_data_t* res = malloc(sizeof(vect_data_t) + capacity * sizeof(T)); \
-    res->capacity = capacity; \
-    res->length = 0; \
-    res->element_size = sizeof(T); \
+    size_t __$capacity$__ = (size_t) (capacity); \
+    vect_data_t* __$res$__ = malloc(sizeof(vect_data_t) + __$capacity$__ * sizeof(T)); \
+    __$res$__->capacity = __$capacity$__; \
+    __$res$__->length = 0; \
+    __$res$__->element_size = sizeof(T); \
     /* RETURN */ \
-    (Vect(T)) ((void*)res+sizeof(vect_data_t)); \
+    (Vect(T)) ((void*)__$res$__+sizeof(vect_data_t)); \
 })
 
 #define Vect_new(T) \
 ({ \
-    vect_data_t* res = malloc(sizeof(vect_data_t) + 4 * sizeof(T)); \
-    res->capacity = 4; \
-    res->length = 0; \
-    res->element_size = sizeof(T); \
+    vect_data_t* __$res$__ = malloc(sizeof(vect_data_t) + 4 * sizeof(T)); \
+    __$res$__->capacity = 4; \
+    __$res$__->length = 0; \
+    __$res$__->element_size = sizeof(T); \
     /* RETURN */ \
-    (Vect(T)) ((void*)res+sizeof(vect_data_t)); \
+    (Vect(T)) ((void*)__$res$__+sizeof(vect_data_t)); \
 })
 
 #define Vect_free(vect) \
@@ -70,38 +84,47 @@ typedef struct {
 
 #define Vect_free_content(vect) \
 ({ \
-    vect_data_t* data = (vect_data_t*)((void*)vect - sizeof(vect_data_t)); \
-    for(int i = 0; i < data->length; i++) \
+    vect_data_t* __$data$__ = (vect_data_t*)((void*)vect - sizeof(vect_data_t)); \
+    for(int i = 0; i < __$data$__->length; i++) \
         free(vect[i]); \
-    data->length = 0; \
+    __$data$__->length = 0; \
 })
 
 #define Vect_push(vect, T, element) \
 ({ \
-    vect_data_t* data = (void*)vect - sizeof(vect_data_t); \
-    if(data->length == data->capacity) { \
-        data = (vect_data_t*)realloc((void*)data, sizeof(vect_data_t) + 2*data->capacity*data->element_size); \
-        data->capacity *= 2; \
+    T __$elem$__ = (T) (element); \
+    vect_data_t* __$data$__ = (void*)vect - sizeof(vect_data_t); \
+    if(__$data$__->length == __$data$__->capacity) { \
+        __$data$__ = (vect_data_t*)realloc((void*)__$data$__, sizeof(vect_data_t) + 2*__$data$__->capacity*__$data$__->element_size); \
+        __$data$__->capacity *= 2; \
     } \
-    vect = (Vect(T)) ((void*)data + sizeof(vect_data_t)); \
-    *(vect + data->length) = element; \
-    data->length++; \
+    vect = (Vect(T)) ((void*)__$data$__ + sizeof(vect_data_t)); \
+    *(vect + __$data$__->length) = __$elem$__; \
+    __$data$__->length++; \
     /* RETURN */ \
     vect; \
 })
 
 #define Vect_pop(vect) \
 ({ \
-    vect_data_t* data = (void*)vect - sizeof(vect_data_t); \
-    data->length--; \
+    vect_data_t* __$data$__ = (void*)vect - sizeof(vect_data_t); \
+    __$data$__->length--; \
     /* RETURN */ \
-    vect[data->length]; \
+    vect[__$data$__->length]; \
 })
 
 #define Vect_length(vect) \
 ({ \
     /* RETURN */ \
     ((vect_data_t*)((void*)vect - sizeof(vect_data_t)))->length; \
+})
+
+#define Vect_print(vect, print_fct) \
+({ \
+    printf("{ "); \
+    for(size_t i = 0; i < Vect_length(vect); i++) \
+        print_fct(vect[i]); printf(" "); \
+    printf("}\n"); \
 })
 
 #endif // __VECT_H__

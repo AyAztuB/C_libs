@@ -11,6 +11,16 @@ vect \- vector c library
 .PP
 .B #include <ayaztub/data_structures/vect.h>
 
+.SH CONTAINS
+The header file also contain a macro to define a lambda function (usefull for
+the \fBVect_print\fR function):
+.PP
+.RS
+.TP
+\fBlambda\fR (\fIreturn_type\fR, \fIargs\fR, \fIbody\fR)
+utilisation exemples: \fBlambda\fR(\fIint\fR, \fI(\f(BIint\fI e)\fR, \fI{ printf("%d\n", e); return e; }\fR);
+.RE
+
 .SH DESCRIPTION
 This library provides a simple implementation of vectors in C.
 It can be used with any types and it's used lake a stack.
@@ -61,6 +71,10 @@ reduce the length of the \fIvect\fR by one and return its last element
 .TP
 \fBsize_t\fR Vect_length (\fBVect(T)\fR \fIvect\fR)
 return the length of the \fIvect\fR
+
+.TP
+\fBvoid\fR Vect_print (\fBVect(T)\fR \fIvect\fR, \fBvoid\fR \fI(*print_fct)(\fBT\fI)\fR)
+print the vector as follow: { print_fct(e1) print_fct(e2) ... }\\n with \fIprint_fct\fR a fonction to print one element of the vector \fIvect\fR.
 
 .SH SEE ALSO
 

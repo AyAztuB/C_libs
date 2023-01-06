@@ -15,6 +15,10 @@ This is a module of futher c libraries.
 
 .SH CONTENT
 
+.TP
+\fBlambda\fR (\fIreturn_type\fR, \fIargs\fR, \fIbody\fR)
+utilisation exemples: \fBlambda\fR(\fIint\fR, \fI(\f(BIint\fI e)\fR, \fI{ printf("%d\n", e); return e; }\fR);
+
 .PP
 \fBdata_structures\fR (\fBayaztub.data_structures\fR(3))
 

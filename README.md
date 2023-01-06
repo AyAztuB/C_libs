@@ -110,6 +110,15 @@ You also can compile your program like `gcc main.c libLIBRARY.a` (for exemple:
 For specific documentation, please refer to the README in the subdirectory or
 use the given man page (if not installed: `man ./ayaztub.t`)
 
+### Lambda function
+
+The header file also contains a macro to define lambda function:
+`lambda(return_type, args, body)`
+It can be used like in the following exemple:
+```
+int (*lambda_fct) (int) = lambda(int, (int e), { printf("%d\n", e); return e; });
+```
+
 ### Data structures
 
 **Include**

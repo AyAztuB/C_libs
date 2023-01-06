@@ -30,6 +30,18 @@
  */
 
 
+#ifndef __LAMBDA_H__
+#define __LAMBDA_H__
+
+#define lambda(lambda$_ret, lambda$_args, lambda$_body) \
+({ \
+    lambda$_ret lambda$__anon$ lambda$_args \
+        lambda$_body \
+    &lambda$__anon$; \
+})
+
+#endif // __LAMBDA_H__
+
 #ifndef __AYAZTUB_H__
 #define __AYAZTUB_H__
 
@@ -157,6 +169,14 @@ typedef struct {
 ({ \
     /* RETURN */ \
     ((vect_data_t*)((void*)vect - sizeof(vect_data_t)))->length; \
+})
+
+#define Vect_print(vect, print_fct) \
+({ \
+    printf("{ "); \
+    for(size_t i = 0; i < Vect_length(vect); i++) \
+        print_fct(vect[i]); printf(" "); \
+    printf("}\n"); \
 })
 
 #endif // __VECT_H__

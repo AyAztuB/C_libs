@@ -22,6 +22,10 @@ All of the libraries in it are data struvtures.
 .SH CONTENT
 
 .TP
+\fBlambda\fR (\fIreturn_type\fR, \fIargs\fR, \fIbody\fR)
+utilisation exemples: \fBlambda\fR(\fIint\fR, \fI(\f(BIint\fI e)\fR, \fI{ printf("%d\n", e); return e; }\fR);
+
+.TP
 \fBlinked_list\fR
 An implementation of linked list (\fBayaztub.data_structures.linked_list\fR(3))
 
