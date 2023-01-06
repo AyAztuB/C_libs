@@ -101,33 +101,32 @@ void* linked_list_remove(linked_list_t* list, int index);
 #define __VECT_H__
 
 #include <stdlib.h>
+#include <stdio.h>
 
 #define Vect(T) T*
 
 typedef struct {
     size_t capacity;
     size_t length;
-    size_t element_size;
 } vect_data_t;
 
 #define Vect_init(T, capacity) \
 ({ \
-    vect_data_t* res = malloc(sizeof(vect_data_t) + capacity * sizeof(T)); \
-    res->capacity = capacity; \
-    res->length = 0; \
-    res->element_size = sizeof(T); \
+    size_t __$capacity$__ = (size_t) (capacity); \
+    vect_data_t* __$res$__ = malloc(sizeof(vect_data_t) + __$capacity$__ * sizeof(T)); \
+    __$res$__->capacity = __$capacity$__; \
+    __$res$__->length = 0; \
     /* RETURN */ \
-    (Vect(T)) ((void*)res+sizeof(vect_data_t)); \
+    (Vect(T)) ((void*)__$res$__+sizeof(vect_data_t)); \
 })
 
 #define Vect_new(T) \
 ({ \
-    vect_data_t* res = malloc(sizeof(vect_data_t) + 4 * sizeof(T)); \
-    res->capacity = 4; \
-    res->length = 0; \
-    res->element_size = sizeof(T); \
+    vect_data_t* __$res$__ = malloc(sizeof(vect_data_t) + 4 * sizeof(T)); \
+    __$res$__->capacity = 4; \
+    __$res$__->length = 0; \
     /* RETURN */ \
-    (Vect(T)) ((void*)res+sizeof(vect_data_t)); \
+    (Vect(T)) ((void*)__$res$__+sizeof(vect_data_t)); \
 })
 
 #define Vect_free(vect) \
@@ -137,32 +136,33 @@ typedef struct {
 
 #define Vect_free_content(vect) \
 ({ \
-    vect_data_t* data = (vect_data_t*)((void*)vect - sizeof(vect_data_t)); \
-    for(int i = 0; i < data->length; i++) \
-        free(vect[i]); \
-    data->length = 0; \
+    vect_data_t* __$data$__ = (vect_data_t*)((void*)vect - sizeof(vect_data_t)); \
+    for(size_t __$i$__ = 0; __$i$__ < __$data$__->length; __$i$__++) \
+        free(vect[__$i$__]); \
+    __$data$__->length = 0; \
 })
 
 #define Vect_push(vect, T, element) \
 ({ \
-    vect_data_t* data = (void*)vect - sizeof(vect_data_t); \
-    if(data->length == data->capacity) { \
-        data = (vect_data_t*)realloc((void*)data, sizeof(vect_data_t) + 2*data->capacity*data->element_size); \
-        data->capacity *= 2; \
+    T __$elem$__ = (T) (element); \
+    vect_data_t* __$data$__ = (void*)vect - sizeof(vect_data_t); \
+    if(__$data$__->length == __$data$__->capacity) { \
+        __$data$__ = (vect_data_t*)realloc((void*)__$data$__, sizeof(vect_data_t) + 2*__$data$__->capacity*sizeof(T)); \
+        __$data$__->capacity *= 2; \
     } \
-    vect = (Vect(T)) ((void*)data + sizeof(vect_data_t)); \
-    *(vect + data->length) = element; \
-    data->length++; \
+    vect = (Vect(T)) ((void*)__$data$__ + sizeof(vect_data_t)); \
+    *(vect + __$data$__->length) = __$elem$__; \
+    __$data$__->length++; \
     /* RETURN */ \
     vect; \
 })
 
 #define Vect_pop(vect) \
 ({ \
-    vect_data_t* data = (void*)vect - sizeof(vect_data_t); \
-    data->length--; \
+    vect_data_t* __$data$__ = (void*)vect - sizeof(vect_data_t); \
+    __$data$__->length--; \
     /* RETURN */ \
-    vect[data->length]; \
+    vect[__$data$__->length]; \
 })
 
 #define Vect_length(vect) \
@@ -174,8 +174,8 @@ typedef struct {
 #define Vect_print(vect, print_fct) \
 ({ \
     printf("{ "); \
-    for(size_t i = 0; i < Vect_length(vect); i++) \
-        print_fct(vect[i]); printf(" "); \
+    for(size_t __$i$__ = 0; __$i$__ < Vect_length(vect); __$i$__++) \
+        print_fct(vect[__$i$__]); printf(" "); \
     printf("}\n"); \
 })
 
