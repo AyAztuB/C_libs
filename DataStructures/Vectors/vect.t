@@ -30,7 +30,7 @@ The struct, defines, ... are listed below.
 .B Struct
 .RS
 .IP vect_data_t
-contening the data of the vector (length, capacity, element_size)
+contening the data of the vector (length, capacity)
 .RE
 
 .PP

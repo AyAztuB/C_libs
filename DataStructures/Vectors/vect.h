@@ -53,7 +53,6 @@
 typedef struct {
     size_t capacity;
     size_t length;
-    size_t element_size;
 } vect_data_t;
 
 #define Vect_init(T, capacity) \
@@ -62,7 +61,6 @@ typedef struct {
     vect_data_t* __$res$__ = malloc(sizeof(vect_data_t) + __$capacity$__ * sizeof(T)); \
     __$res$__->capacity = __$capacity$__; \
     __$res$__->length = 0; \
-    __$res$__->element_size = sizeof(T); \
     /* RETURN */ \
     (Vect(T)) ((void*)__$res$__+sizeof(vect_data_t)); \
 })
@@ -72,7 +70,6 @@ typedef struct {
     vect_data_t* __$res$__ = malloc(sizeof(vect_data_t) + 4 * sizeof(T)); \
     __$res$__->capacity = 4; \
     __$res$__->length = 0; \
-    __$res$__->element_size = sizeof(T); \
     /* RETURN */ \
     (Vect(T)) ((void*)__$res$__+sizeof(vect_data_t)); \
 })
@@ -85,8 +82,8 @@ typedef struct {
 #define Vect_free_content(vect) \
 ({ \
     vect_data_t* __$data$__ = (vect_data_t*)((void*)vect - sizeof(vect_data_t)); \
-    for(int i = 0; i < __$data$__->length; i++) \
-        free(vect[i]); \
+    for(size_t __$i$__ = 0; __$i$__ < __$data$__->length; __$i$__++) \
+        free(vect[__$i$__]); \
     __$data$__->length = 0; \
 })
 
@@ -95,7 +92,7 @@ typedef struct {
     T __$elem$__ = (T) (element); \
     vect_data_t* __$data$__ = (void*)vect - sizeof(vect_data_t); \
     if(__$data$__->length == __$data$__->capacity) { \
-        __$data$__ = (vect_data_t*)realloc((void*)__$data$__, sizeof(vect_data_t) + 2*__$data$__->capacity*__$data$__->element_size); \
+        __$data$__ = (vect_data_t*)realloc((void*)__$data$__, sizeof(vect_data_t) + 2*__$data$__->capacity*sizeof(T)); \
         __$data$__->capacity *= 2; \
     } \
     vect = (Vect(T)) ((void*)__$data$__ + sizeof(vect_data_t)); \
@@ -122,8 +119,8 @@ typedef struct {
 #define Vect_print(vect, print_fct) \
 ({ \
     printf("{ "); \
-    for(size_t i = 0; i < Vect_length(vect); i++) \
-        print_fct(vect[i]); printf(" "); \
+    for(size_t __$i$__ = 0; __$i$__ < Vect_length(vect); __$i$__++) \
+        print_fct(vect[__$i$__]); printf(" "); \
     printf("}\n"); \
 })
 
