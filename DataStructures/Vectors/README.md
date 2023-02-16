@@ -19,10 +19,6 @@ It can be used like in the following exemple:
 int (*lambda_fct) (int) = lambda(int, (int e), { printf("%d\n", e); return e; });
 ```
 
-### Struct
-
-- vect\_data\_t
-
 ### Define
 
 * Vect(T) T\*

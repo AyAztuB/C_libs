@@ -50,78 +50,71 @@
 
 #define Vect(T) T*
 
-typedef struct {
-    size_t capacity;
-    size_t length;
-} vect_data_t;
-
-#define Vect_init(T, capacity) \
+#define Vect_length(vect$__len) \
 ({ \
-    size_t __$capacity$__ = (size_t) (capacity); \
-    vect_data_t* __$res$__ = malloc(sizeof(vect_data_t) + __$capacity$__ * sizeof(T)); \
-    __$res$__->capacity = __$capacity$__; \
-    __$res$__->length = 0; \
     /* RETURN */ \
-    (Vect(T)) ((void*)__$res$__+sizeof(vect_data_t)); \
+    *((size_t*)(((char*)vect$__len)-2*sizeof(size_t))); \
+})
+
+#define Vect_print(vect$__print, fct$__print) \
+({ \
+    printf("{ "); \
+    for(size_t __i$__print = 0; __i$__print < Vect_length(vect$__print); __i$__print++) \
+    { fct$__print(vect$__print[__i$__print]); printf(" "); } \
+    printf("}\n"); \
+})
+
+#define Vect_init(T, capacity$__init) \
+({ \
+    size_t __cap$__init = (size_t) (capacity$__init); \
+    void* __res$__init = malloc(sizeof(size_t)*2+__cap$__init*sizeof(T)); \
+    *((size_t*)__res$__init) = 0; /* length */ \
+    *(((size_t*)__res$__init)+1) = __cap$__init; /* capacity */ \
+    /* RETURN */ \
+    (Vect(T)) (((size_t*)__res$__init)+2); \
 })
 
 #define Vect_new(T) \
 ({ \
-    vect_data_t* __$res$__ = malloc(sizeof(vect_data_t) + 4 * sizeof(T)); \
-    __$res$__->capacity = 4; \
-    __$res$__->length = 0; \
     /* RETURN */ \
-    (Vect(T)) ((void*)__$res$__+sizeof(vect_data_t)); \
+    Vect_init(T, 4); \
 })
 
-#define Vect_free(vect) \
+#define Vect_free(vect$__free) \
 ({ \
-    free((void*)vect - sizeof(vect_data_t)); \
+    free(((size_t*)vect$__free)-2); \
 })
 
-#define Vect_free_content(vect) \
+#define Vect_free_content(vect$__freecontent) \
 ({ \
-    vect_data_t* __$data$__ = (vect_data_t*)((void*)vect - sizeof(vect_data_t)); \
-    for(size_t __$i$__ = 0; __$i$__ < __$data$__->length; __$i$__++) \
-        free(vect[__$i$__]); \
-    __$data$__->length = 0; \
+    size_t __len$__freecontent = Vect_length(vect$__freecontent); \
+    for(size_t __i$__freecontent = 0; __i$__freecontent < __len$__freecontent; __i$__freecontent++) \
+        free(vect$__freecontent[__i$__freecontent]); \
+    *((size_t*)(((size_t*)vect$__freecontent)-2)) = 0; \
 })
 
-#define Vect_push(vect, T, element) \
+#define Vect_push(vect$__push, T, element$__push) \
 ({ \
-    T __$elem$__ = (T) (element); \
-    vect_data_t* __$data$__ = (void*)vect - sizeof(vect_data_t); \
-    if(__$data$__->length == __$data$__->capacity) { \
-        __$data$__ = (vect_data_t*)realloc((void*)__$data$__, sizeof(vect_data_t) + 2*__$data$__->capacity*sizeof(T)); \
-        __$data$__->capacity *= 2; \
+    T __elem$__push = (T) (element$__push); \
+    size_t* __data$__push = (size_t*)(((size_t*)vect$__push)-2); \
+    if(*__data$__push == *(__data$__push+1)) { \
+        size_t __cap$__push = *__data$__push; \
+        __data$__push = (size_t*)realloc((void*)__data$__push, 2*sizeof(size_t)+2*__cap$__push*sizeof(T)); \
+        *(__data$__push+1) *= 2; \
     } \
-    vect = (Vect(T)) ((void*)__$data$__ + sizeof(vect_data_t)); \
-    *(vect + __$data$__->length) = __$elem$__; \
-    __$data$__->length++; \
-    /* RETURN */ \
-    vect; \
+    Vect(T) __vect$__push = (Vect(T)) (((size_t*)__data$__push)+2); \
+    *(__vect$__push + *__data$__push) = __elem$__push; \
+    *__data$__push += 1; \
+    /* RETURN  */ \
+    __vect$__push; \
 })
 
-#define Vect_pop(vect) \
+#define Vect_pop(vect$__pop) \
 ({ \
-    vect_data_t* __$data$__ = (void*)vect - sizeof(vect_data_t); \
-    __$data$__->length--; \
+    size_t* __len_ptr$__pop = (size_t*)(((size_t*)vect$__pop)-2); \
+    *__len_ptr$__pop -= 1; \
     /* RETURN */ \
-    vect[__$data$__->length]; \
-})
-
-#define Vect_length(vect) \
-({ \
-    /* RETURN */ \
-    ((vect_data_t*)((void*)vect - sizeof(vect_data_t)))->length; \
-})
-
-#define Vect_print(vect, print_fct) \
-({ \
-    printf("{ "); \
-    for(size_t __$i$__ = 0; __$i$__ < Vect_length(vect); __$i$__++) \
-        print_fct(vect[__$i$__]); printf(" "); \
-    printf("}\n"); \
+    vect$__pop[*__len_ptr$__pop]; \
 })
 
 #endif // __VECT_H__

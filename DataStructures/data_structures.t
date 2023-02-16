@@ -1,4 +1,4 @@
-.TH data_structures 3 "december 10, 2022" "version 1.0" "AyAztuB C library doc : data_structures"
+.TH data_structures 3 "december 10, 2022" "version 1.1" "AyAztuB C library doc : data_structures"
 
 .SH NAME
 data_structures \- data structures c library

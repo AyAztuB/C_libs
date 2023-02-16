@@ -1,4 +1,4 @@
-.TH vect 3 "december 16, 2022" "version 1.0" "AyAztuB C library doc: vect"
+.TH vect 3 "december 16, 2022" "version 1.1" "AyAztuB C library doc: vect"
 
 .SH NAME
 vect \- vector c library
@@ -25,13 +25,6 @@ utilisation exemples: \fBlambda\fR(\fIint\fR, \fI(\f(BIint\fI e)\fR, \fI{ printf
 This library provides a simple implementation of vectors in C.
 It can be used with any types and it's used lake a stack.
 The struct, defines, ... are listed below.
-
-.PP
-.B Struct
-.RS
-.IP vect_data_t
-contening the data of the vector (length, capacity)
-.RE
 
 .PP
 .B Define

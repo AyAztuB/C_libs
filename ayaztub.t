@@ -1,4 +1,4 @@
-.TH ayaztub 3 "december 10, 2022" "version 1.0" "AyAztuB C library doc"
+.TH ayaztub 3 "december 10, 2022" "version 1.1" "AyAztuB C library doc"
 
 .SH NAME
 ayaztub \- c library
